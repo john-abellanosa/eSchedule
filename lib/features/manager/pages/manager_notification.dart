@@ -162,9 +162,19 @@ class _ManagerNotificationsState extends State<ManagerNotifications>
                 // MARK ALL READ (same row)
                 Padding(
                   padding: const EdgeInsets.only(right: 12),
-                  child: TextButton(
+                  child: TextButton.icon(
+                    icon: Icon(
+                      Icons.done_all,
+                      size: 16,
+                      color: const Color(0xFF6B7280).withOpacity(0.7),
+                    ),
+                    label: const Text(
+                      'Mark all as read',
+                      style: TextStyle(color: Color(0xFF6B7280), fontSize: 12),
+                    ),
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color(0xFFEEEEEE),
+                      foregroundColor: const Color(0xFF6B7280),
+                      backgroundColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -174,10 +184,6 @@ class _ManagerNotificationsState extends State<ManagerNotifications>
                       ),
                     ),
                     onPressed: _markAllRead,
-                    child: const Text(
-                      'Mark all as read',
-                      style: TextStyle(color: Color(0xFF6B7280), fontSize: 12),
-                    ),
                   ),
                 ),
               ],
@@ -206,7 +212,10 @@ class _ManagerNotificationsState extends State<ManagerNotifications>
       padding: EdgeInsets.zero,
       itemCount: list.length,
       separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey[200]),
-      itemBuilder: (_, i) => _row(list[i]),
+      itemBuilder: (_, i) => GestureDetector(
+        onTap: () => _markAsRead(list[i]),
+        child: _row(list[i]),
+      ),
     );
   }
 
@@ -214,98 +223,52 @@ class _ManagerNotificationsState extends State<ManagerNotifications>
     final bool unread = n['unread'] as bool;
     return Container(
       color: unread ? const Color(0xFFF0F7FF) : Colors.transparent,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // CONTENT (left)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 0, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    n['title'] as String,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: unread ? FontWeight.w700 : FontWeight.w600,
-                      color: const Color(0xFF1A1D1F),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    n['message'] as String,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF4B5563),
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        n['time'] as String,
-                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                      ),
-                      if (unread) ...[
-                        const SizedBox(width: 8),
-                        const SizedBox(
-                          width: 8,
-                          height: 8,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1E88E5),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              n['title'] as String,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: unread ? FontWeight.w700 : FontWeight.w600,
+                color: const Color(0xFF1A1D1F),
               ),
             ),
-          ),
-          // CENTERED 3-DOTS MENU
-          Center(
-            child: PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert, color: Colors.grey[400], size: 18),
-              onSelected: (v) => _handleMenu(v, n),
-              itemBuilder: (_) => [
-                PopupMenuItem(
-                  value: 'mark',
-                  child: Row(
-                    children: [
-                      Icon(
-                        unread ? Icons.mark_email_read : Icons.drafts,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(unread ? 'Mark as read' : 'Mark as unread'),
-                    ],
-                  ),
+            const SizedBox(height: 4),
+            Text(
+              n['message'] as String,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF4B5563),
+                height: 1.3,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  n['time'] as String,
+                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                 ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete_outline,
-                        size: 16,
-                        color: Colors.grey[600],
+                if (unread) ...[
+                  const SizedBox(width: 8),
+                  const SizedBox(
+                    width: 8,
+                    height: 8,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Color(0xFF1E88E5),
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(width: 8),
-                      const Text('Delete'),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
-          ),
-          const SizedBox(width: 12),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -341,17 +304,9 @@ class _ManagerNotificationsState extends State<ManagerNotifications>
   /* --------------------------------------------- */
   /* ACTIONS                                       */
   /* --------------------------------------------- */
-  void _handleMenu(String action, Map<String, dynamic> n) {
-    switch (action) {
-      case 'mark':
-        setState(() => n['unread'] = !(n['unread'] as bool));
-        break;
-      case 'delete':
-        setState(() => notifications.removeWhere((e) => e['id'] == n['id']));
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Notification deleted')));
-        break;
+  void _markAsRead(Map<String, dynamic> n) {
+    if (n['unread'] as bool) {
+      setState(() => n['unread'] = false);
     }
   }
 

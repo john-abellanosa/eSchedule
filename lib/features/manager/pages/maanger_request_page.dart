@@ -201,6 +201,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E3A8A),
+        automaticallyImplyLeading: false,
         elevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

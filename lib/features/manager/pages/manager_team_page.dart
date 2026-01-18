@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ManagerTeamPage extends StatefulWidget {
   const ManagerTeamPage({Key? key}) : super(key: key);
@@ -8,14 +9,30 @@ class ManagerTeamPage extends StatefulWidget {
 }
 
 class _ManagerTeamPageState extends State<ManagerTeamPage> {
-  // Store AWOL and Late status for each crew member
+  // Store attendance status for each crew member
   final Map<String, bool> _awolStatus = {};
-  final Map<String, String> _lateStatus = {}; // Stores late duration
+  final Map<String, Map<String, dynamic>> _attendanceStatus = {};
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
+  // Filter state
+  String? _selectedShift;
+  final List<String> _shiftFilters = [
+    'All Shifts',
+    'Graveyard Shift',
+    'Morning Shift',
+    'Afternoon Shift',
+    'Evening Shift',
+  ];
+
   // Sample crew data with actual names
   final Map<String, Map<String, List<String>>> _crewData = {
+    'Graveyard Shift': {
+      'Front Counter': ['Olivia Taylor', 'Robert Lee'],
+      'Drive-Thru': ['Jennifer White', 'Thomas Harris'],
+      'Kitchen': ['Lisa Martin', 'Daniel Clark', 'Kevin Wilson'],
+      'Fry Station': ['Amanda Scott'],
+    },
     'Morning Shift': {
       'Front Counter': [
         'Emma Davis',
@@ -34,7 +51,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
       'Fry Station': ['Kevin Wilson', 'Amanda Scott'],
       'Drinks & Desserts': ['Brian Adams', 'Jessica Turner'],
     },
-    'Mid Shift': {
+    'Afternoon Shift': {
       'Front Counter': [
         'Sarah Johnson',
         'Michael Chen',
@@ -59,7 +76,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
       'Fry Station': ['Sophia Brown', 'Michael Chen', 'David Miller'],
       'Drinks & Desserts': ['Emma Davis', 'James Wilson'],
     },
-    'Night Shift': {
+    'Evening Shift': {
       'Front Counter': ['Thomas Harris', 'Lisa Martin', 'Daniel Clark'],
       'Drive-Thru': ['Kevin Wilson', 'Amanda Scott', 'Brian Adams'],
       'Kitchen': [
@@ -71,18 +88,13 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
       'Fry Station': ['Emma Davis', 'James Wilson'],
       'Drinks & Desserts': ['Sarah Johnson'],
     },
-    'Graveyard Shift': {
-      'Front Counter': ['Olivia Taylor', 'Robert Lee'],
-      'Drive-Thru': ['Jennifer White', 'Thomas Harris'],
-      'Kitchen': ['Lisa Martin', 'Daniel Clark', 'Kevin Wilson'],
-      'Fry Station': ['Amanda Scott'],
-    },
   };
 
   @override
   void initState() {
     super.initState();
-    // Listen for back button press
+    _selectedShift = 'All Shifts';
+    _searchController.addListener(_onSearchChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusManager.instance.addListener(_handleFocusChange);
     });
@@ -91,13 +103,17 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
   @override
   void dispose() {
     FocusManager.instance.removeListener(_handleFocusChange);
+    _searchController.removeListener(_onSearchChanged);
     _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
 
+  void _onSearchChanged() {
+    setState(() {}); // Trigger rebuild when search text changes
+  }
+
   void _handleFocusChange() {
-    // Close search when tapping outside if search is focused
     if (_searchFocusNode.hasFocus &&
         !FocusManager.instance.primaryFocus!.hasFocus) {
       _searchFocusNode.unfocus();
@@ -110,6 +126,234 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
     String crewName,
   ) async {
     final TextEditingController durationController = TextEditingController();
+    String selectedUnit = 'minutes';
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Mark as Late',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      crewName,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    const SizedBox(height: 20),
+                    // Unit selection
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setStateDialog(() {
+                                selectedUnit = 'minutes';
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: selectedUnit == 'minutes'
+                                    ? const Color(0xFF1E3A8A)
+                                    : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: selectedUnit == 'minutes'
+                                      ? const Color(0xFF1E3A8A)
+                                      : Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Minutes',
+                                  style: TextStyle(
+                                    color: selectedUnit == 'minutes'
+                                        ? Colors.white
+                                        : Colors.grey[700],
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setStateDialog(() {
+                                selectedUnit = 'hours';
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: selectedUnit == 'hours'
+                                    ? const Color(0xFF1E3A8A)
+                                    : Colors.grey[100],
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: selectedUnit == 'hours'
+                                      ? const Color(0xFF1E3A8A)
+                                      : Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Hours',
+                                  style: TextStyle(
+                                    color: selectedUnit == 'hours'
+                                        ? Colors.white
+                                        : Colors.grey[700],
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: durationController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: selectedUnit == 'minutes'
+                            ? 'e.g., 15, 30, 45'
+                            : 'e.g., 1, 1.5, 2',
+                        hintStyle: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF1E3A8A),
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.timer,
+                          size: 20,
+                          color: Colors.grey[600],
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Enter how long they were late',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey[600],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                          ),
+                          child: const Text('Cancel'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (durationController.text.trim().isNotEmpty) {
+                              final durationValue = durationController.text
+                                  .trim();
+                              final statusText =
+                                  '$durationValue ${selectedUnit == 'minutes' ? 'min' : 'hr'} late';
+                              setState(() {
+                                _attendanceStatus[memberKey] = {
+                                  'type': 'late',
+                                  'value': durationValue,
+                                  'unit': selectedUnit,
+                                  'text': statusText,
+                                };
+                                _awolStatus[memberKey] = false;
+                              });
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1E3A8A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                          ),
+                          child: const Text(
+                            'Mark Late',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEarlyDialog(
+    BuildContext context,
+    String memberKey,
+    String crewName,
+    String type,
+  ) async {
+    final TextEditingController durationController = TextEditingController();
+    final String dialogTitle = type == 'early_in' ? 'Early In' : 'Early Out';
+    final String actionText = type == 'early_in'
+        ? 'Mark Early In'
+        : 'Mark Early Out';
 
     await showDialog(
       context: context,
@@ -123,7 +367,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Mark as Late',
+                dialogTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -136,10 +380,21 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                 style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
               const SizedBox(height: 20),
+              Text(
+                'Duration (in hours)',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+              const SizedBox(height: 8),
               TextFormField(
                 controller: durationController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'e.g., 15 minutes, 30 min, 1 hour',
+                  hintText: 'e.g., 1, 1.5, 2',
+                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.grey[300]!),
@@ -157,7 +412,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                     vertical: 14,
                   ),
                   prefixIcon: Icon(
-                    Icons.timer,
+                    Icons.access_time,
                     size: 20,
                     color: Colors.grey[600],
                   ),
@@ -167,7 +422,9 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Enter how long they were late',
+                type == 'early_in'
+                    ? 'Enter how early they arrived'
+                    : 'Enter how early they left',
                 style: TextStyle(fontSize: 12, color: Colors.grey[500]),
               ),
               const SizedBox(height: 24),
@@ -189,11 +446,17 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (durationController.text.trim().isNotEmpty) {
+                        final durationValue = durationController.text.trim();
+                        final statusText =
+                            '$durationValue hr ${type == 'early_in' ? 'early in' : 'early out'}';
                         setState(() {
-                          _lateStatus[memberKey] = durationController.text
-                              .trim();
-                          _awolStatus[memberKey] =
-                              false; // Remove AWOL status if marking as late
+                          _attendanceStatus[memberKey] = {
+                            'type': type,
+                            'value': durationValue,
+                            'unit': 'hours',
+                            'text': statusText,
+                          };
+                          _awolStatus[memberKey] = false;
                         });
                         Navigator.pop(context);
                       }
@@ -208,9 +471,9 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                         vertical: 10,
                       ),
                     ),
-                    child: const Text(
-                      'Mark Late',
-                      style: TextStyle(
+                    child: Text(
+                      actionText,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -225,13 +488,99 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
     );
   }
 
+  void _showFilterMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Filter by Shift',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Divider(height: 1, color: Colors.grey[200]),
+            ..._shiftFilters.map((shift) {
+              bool isSelected = _selectedShift == shift;
+              return Column(
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.check_circle,
+                      color: isSelected
+                          ? const Color(0xFF1E3A8A)
+                          : Colors.transparent,
+                      size: 22,
+                    ),
+                    title: Text(
+                      shift,
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _selectedShift = shift;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  if (shift != _shiftFilters.last)
+                    Divider(
+                      height: 1,
+                      color: Colors.grey[200],
+                      indent: 16,
+                      endIndent: 16,
+                    ),
+                ],
+              );
+            }).toList(),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showActionMenu(
     BuildContext context,
     String memberKey,
     String crewName,
   ) {
     final isAwol = _awolStatus[memberKey] ?? false;
-    final isLate = _lateStatus[memberKey] != null;
+    final attendanceData = _attendanceStatus[memberKey];
+    final isLate = attendanceData != null && attendanceData['type'] == 'late';
+    final isEarlyIn =
+        attendanceData != null && attendanceData['type'] == 'early_in';
+    final isEarlyOut =
+        attendanceData != null && attendanceData['type'] == 'early_out';
 
     showModalBottomSheet(
       context: context,
@@ -274,16 +623,13 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
             ),
             const SizedBox(height: 20),
             Divider(height: 1, color: Colors.grey[200]),
-            // Mark as Late option - icon blue, text black
+            // Mark as Late option
             ListTile(
-              leading: Icon(
-                Icons.timer,
-                color: const Color(0xFF1E3A8A), // Blue icon
-              ),
+              leading: Icon(Icons.timer, color: const Color(0xFF1E3A8A)),
               title: Text(
-                'Mark as Late',
+                isLate ? 'Remove Late' : 'Mark as Late',
                 style: TextStyle(
-                  color: Colors.grey[800], // Black text
+                  color: Colors.grey[800],
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -294,14 +640,14 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEE2E2), // Light red background
+                        color: const Color(0xFFFEE2E2),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        _lateStatus[memberKey]!,
+                        attendanceData['text']!,
                         style: const TextStyle(
                           fontSize: 11,
-                          color: Color(0xFFDC2626), // Red text
+                          color: Color(0xFFDC2626),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -309,7 +655,13 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                   : null,
               onTap: () {
                 Navigator.pop(context);
-                _showLateDurationDialog(context, memberKey, crewName);
+                if (isLate) {
+                  setState(() {
+                    _attendanceStatus.remove(memberKey);
+                  });
+                } else {
+                  _showLateDurationDialog(context, memberKey, crewName);
+                }
               },
             ),
             Divider(
@@ -318,16 +670,107 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
               indent: 16,
               endIndent: 16,
             ),
-            // Mark as AWOL option - icon blue, text black
+            // Early In option
             ListTile(
-              leading: Icon(
-                Icons.warning,
-                color: const Color(0xFF1E3A8A), // Blue icon
+              leading: Icon(Icons.access_time, color: const Color(0xFF1E3A8A)),
+              title: Text(
+                isEarlyIn ? 'Remove Early In' : 'Early In',
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              trailing: isEarlyIn
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDCFCE7),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        attendanceData['text']!,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF16A34A),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  : null,
+              onTap: () {
+                Navigator.pop(context);
+                if (isEarlyIn) {
+                  setState(() {
+                    _attendanceStatus.remove(memberKey);
+                  });
+                } else {
+                  _showEarlyDialog(context, memberKey, crewName, 'early_in');
+                }
+              },
+            ),
+            Divider(
+              height: 1,
+              color: Colors.grey[200],
+              indent: 16,
+              endIndent: 16,
+            ),
+            // Early Out option
+            ListTile(
+              leading: Icon(Icons.access_time, color: const Color(0xFF1E3A8A)),
+              title: Text(
+                isEarlyOut ? 'Remove Early Out' : 'Early Out',
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              trailing: isEarlyOut
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDCFCE7),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        attendanceData['text']!,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF16A34A),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    )
+                  : null,
+              onTap: () {
+                Navigator.pop(context);
+                if (isEarlyOut) {
+                  setState(() {
+                    _attendanceStatus.remove(memberKey);
+                  });
+                } else {
+                  _showEarlyDialog(context, memberKey, crewName, 'early_out');
+                }
+              },
+            ),
+            Divider(
+              height: 1,
+              color: Colors.grey[200],
+              indent: 16,
+              endIndent: 16,
+            ),
+            // Mark as AWOL option
+            ListTile(
+              leading: Icon(Icons.warning, color: const Color(0xFF1E3A8A)),
               title: Text(
                 isAwol ? 'Remove AWOL' : 'Mark as AWOL',
                 style: TextStyle(
-                  color: Colors.grey[800], // Black text
+                  color: Colors.grey[800],
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -355,34 +798,11 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                 setState(() {
                   _awolStatus[memberKey] = !isAwol;
                   if (_awolStatus[memberKey] == true) {
-                    _lateStatus.remove(
-                      memberKey,
-                    ); // Remove late status if marking as AWOL
+                    _attendanceStatus.remove(memberKey);
                   }
                 });
                 Navigator.pop(context);
               },
-            ),
-            Divider(
-              height: 1,
-              color: Colors.grey[200],
-              indent: 16,
-              endIndent: 16,
-            ),
-            // Close option - icon blue, text black
-            ListTile(
-              leading: const Icon(
-                Icons.close,
-                color: Color(0xFF1E3A8A),
-              ), // Blue icon
-              title: const Text(
-                'Close',
-                style: TextStyle(
-                  color: Colors.black, // Black text
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              onTap: () => Navigator.pop(context),
             ),
             const SizedBox(height: 16),
           ],
@@ -391,13 +811,61 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
     );
   }
 
+  // Get filtered crew data based on shift and search
+  Map<String, Map<String, List<String>>> get _filteredCrewData {
+    final searchQuery = _searchController.text.trim().toLowerCase();
+    Map<String, Map<String, List<String>>> filteredData = {};
+
+    // First filter by shift
+    if (_selectedShift == 'All Shifts') {
+      filteredData = Map.from(_crewData);
+    } else if (_selectedShift != null &&
+        _crewData.containsKey(_selectedShift)) {
+      filteredData[_selectedShift!] = _crewData[_selectedShift!]!;
+    }
+
+    // Then filter by search query if there is one
+    if (searchQuery.isNotEmpty) {
+      final Map<String, Map<String, List<String>>> searchFilteredData = {};
+
+      for (final shiftEntry in filteredData.entries) {
+        final shift = shiftEntry.key;
+        final stationData = shiftEntry.value;
+        final Map<String, List<String>> filteredStationData = {};
+
+        for (final stationEntry in stationData.entries) {
+          final station = stationEntry.key;
+          final crewList = stationEntry.value;
+          final filteredCrew = crewList
+              .where((crewName) => crewName.toLowerCase().contains(searchQuery))
+              .toList();
+
+          if (filteredCrew.isNotEmpty) {
+            filteredStationData[station] = filteredCrew;
+          }
+        }
+
+        if (filteredStationData.isNotEmpty) {
+          searchFilteredData[shift] = filteredStationData;
+        }
+      }
+
+      return searchFilteredData;
+    }
+
+    return filteredData;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final filteredCrewData = _filteredCrewData;
+    final hasSearchResults = filteredCrewData.isNotEmpty;
+    final searchQuery = _searchController.text.trim();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: GestureDetector(
         onTap: () {
-          // Close keyboard when tapping outside
           FocusScope.of(context).unfocus();
         },
         behavior: HitTestBehavior.translucent,
@@ -427,12 +895,12 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Team Schedule',
                                   style: TextStyle(
                                     color: Colors.white,
@@ -440,10 +908,10 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                SizedBox(height: 2),
+                                const SizedBox(height: 2),
                                 Text(
-                                  'Today, December 12',
-                                  style: TextStyle(
+                                  _getCurrentDate(),
+                                  style: const TextStyle(
                                     color: Colors.white70,
                                     fontSize: 12,
                                   ),
@@ -461,7 +929,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                                 Icons.filter_list,
                                 color: Colors.white,
                               ),
-                              onPressed: () {},
+                              onPressed: () => _showFilterMenu(context),
                             ),
                           ),
                         ],
@@ -483,7 +951,6 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                     // Search Bar
                     GestureDetector(
                       onTap: () {
-                        // Focus on search field when tapped
                         _searchFocusNode.requestFocus();
                       },
                       child: Container(
@@ -521,7 +988,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                                 decoration: InputDecoration(
                                   hintText: 'Search crew members...',
                                   hintStyle: TextStyle(
-                                    color: Colors.grey[500],
+                                    color: Colors.grey[400],
                                     fontSize: 14,
                                   ),
                                   border: InputBorder.none,
@@ -532,10 +999,6 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                                   fontSize: 14,
                                   color: Color(0xFF0F172A),
                                 ),
-                                onChanged: (value) {
-                                  // You can add search functionality here
-                                  setState(() {});
-                                },
                               ),
                             ),
                             if (_searchController.text.isNotEmpty)
@@ -543,7 +1006,6 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                                 onTap: () {
                                   _searchController.clear();
                                   _searchFocusNode.unfocus();
-                                  setState(() {});
                                 },
                                 child: Icon(
                                   Icons.clear,
@@ -556,18 +1018,138 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildDateSelector(),
-                    const SizedBox(height: 24),
-                    _buildShiftSection('Morning Shift', '6:00 AM - 12:00 PM'),
-                    const SizedBox(height: 20),
-                    _buildShiftSection('Mid Shift', '12:00 PM - 6:00 PM'),
-                    const SizedBox(height: 20),
-                    _buildShiftSection('Night Shift', '6:00 PM - 12:00 AM'),
-                    const SizedBox(height: 20),
-                    _buildShiftSection('Graveyard Shift', '12:00 AM - 6:00 AM'),
-                    const SizedBox(height: 24),
-                    _buildLeaveSection(),
-                    const SizedBox(height: 20),
+                    // Search results message
+                    if (searchQuery.isNotEmpty && hasSearchResults)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          'Search results for "$searchQuery"',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF64748B),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    if (searchQuery.isNotEmpty && !hasSearchResults)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFE2E8F0),
+                              width: 1,
+                            ),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 48,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No results found',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'No crew members match "$searchQuery"',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Display shift filter status
+                    if (_selectedShift != null &&
+                        _selectedShift != 'All Shifts' &&
+                        !searchQuery.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E3A8A),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.filter_alt,
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                _selectedShift!,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedShift = 'All Shifts';
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (hasSearchResults)
+                      ...filteredCrewData.entries.map((entry) {
+                        final shift = entry.key;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: _buildShiftSection(
+                            shift,
+                            _getShiftTime(shift),
+                          ),
+                        );
+                      }).toList()
+                    else if (!searchQuery.isNotEmpty)
+                      ..._crewData.entries.map((entry) {
+                        final shift = entry.key;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: _buildShiftSection(
+                            shift,
+                            _getShiftTime(shift),
+                          ),
+                        );
+                      }).toList(),
+                    if (!searchQuery.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      _buildLeaveSection(),
+                      const SizedBox(height: 20),
+                    ],
                   ],
                 ),
               ),
@@ -578,106 +1160,29 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
     );
   }
 
-  Widget _buildDateSelector() {
-    return SizedBox(
-      height: 80,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          bool isSelected = index == 0;
-          DateTime date = DateTime.now().add(Duration(days: index));
-          return Container(
-            width: 60,
-            margin: const EdgeInsets.only(right: 10),
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF1E3A8A) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isSelected
-                    ? const Color(0xFF1E3A8A)
-                    : const Color(0xFFE7EBF0),
-              ),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: const Color(0xFF1E3A8A).withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : [
-                      const BoxShadow(
-                        color: Color(0x140F172A),
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  [
-                    'Sun',
-                    'Mon',
-                    'Tue',
-                    'Wed',
-                    'Thu',
-                    'Fri',
-                    'Sat',
-                  ][date.weekday % 7],
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isSelected
-                        ? Colors.white70
-                        : const Color(0xFF94A3B8),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '${date.day}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: isSelected ? Colors.white : const Color(0xFF0F172A),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  [
-                    'Jan',
-                    'Feb',
-                    'Mar',
-                    'Apr',
-                    'May',
-                    'Jun',
-                    'Jul',
-                    'Aug',
-                    'Sep',
-                    'Oct',
-                    'Nov',
-                    'Dec',
-                  ][date.month - 1],
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? Colors.white70
-                        : const Color(0xFF94A3B8),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+  String _getCurrentDate() {
+    final now = DateTime.now();
+    final formatter = DateFormat('EEEE, MMMM d, y');
+    return formatter.format(now);
+  }
+
+  String _getShiftTime(String shift) {
+    switch (shift) {
+      case 'Graveyard Shift':
+        return '12:00 AM - 6:00 AM';
+      case 'Morning Shift':
+        return '6:00 AM - 12:00 PM';
+      case 'Afternoon Shift':
+        return '12:00 PM - 6:00 PM';
+      case 'Evening Shift':
+        return '6:00 PM - 12:00 AM';
+      default:
+        return '';
+    }
   }
 
   Widget _buildShiftSection(String title, String time) {
-    final stationData = _crewData[title]!;
+    final stationData = _filteredCrewData[title] ?? _crewData[title]!;
     final totalCrewCount = stationData.values.fold<int>(
       0,
       (sum, crewList) => sum + crewList.length,
@@ -840,20 +1345,29 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
             children: crewList.map((crewName) {
               final memberKey = '$shift|$station|$crewName';
               final isAwol = _awolStatus[memberKey] ?? false;
-              final lateDuration = _lateStatus[memberKey];
-              final isLate = lateDuration != null;
+              final attendanceData = _attendanceStatus[memberKey];
+              final isLate =
+                  attendanceData != null && attendanceData['type'] == 'late';
+              final isEarlyIn =
+                  attendanceData != null &&
+                  attendanceData['type'] == 'early_in';
+              final isEarlyOut =
+                  attendanceData != null &&
+                  attendanceData['type'] == 'early_out';
 
-              // Simple color scheme
-              Color bgColor = const Color(0xFFF8FAFC); // Default background
-              Color statusColor = const Color(0xFF0F172A); // Black for names
-              Color statusTextColor = Colors.grey[700]!;
+              // Color scheme
+              Color bgColor = const Color(0xFFF8FAFC);
               Color borderColor = const Color(0xFFE2E8F0);
+              Color statusTextColor = Colors.grey[700]!;
 
               if (isAwol || isLate) {
-                // AWOL and Late: Red theme
                 bgColor = const Color(0xFFFEF2F2);
                 borderColor = const Color(0xFFFECACA);
                 statusTextColor = const Color(0xFFDC2626);
+              } else if (isEarlyIn || isEarlyOut) {
+                bgColor = const Color(0xFFF0FDF4);
+                borderColor = const Color(0xFFBBF7D0);
+                statusTextColor = const Color(0xFF16A34A);
               }
 
               return Padding(
@@ -872,9 +1386,9 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                         height: 32,
                         decoration: BoxDecoration(
                           color: isAwol || isLate
-                              ? const Color(
-                                  0xFFFEE2E2,
-                                ) // Red for both AWOL and Late
+                              ? const Color(0xFFFEE2E2)
+                              : isEarlyIn || isEarlyOut
+                              ? const Color(0xFFDCFCE7)
                               : const Color(0xFFF1F5F9),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -883,9 +1397,9 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                             crewName[0],
                             style: TextStyle(
                               color: isAwol || isLate
-                                  ? const Color(
-                                      0xFFDC2626,
-                                    ) // Red for both AWOL and Late
+                                  ? const Color(0xFFDC2626)
+                                  : isEarlyIn || isEarlyOut
+                                  ? const Color(0xFF16A34A)
                                   : const Color(0xFF475569),
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
@@ -898,13 +1412,12 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Name in black always
                             Text(
                               crewName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
-                                color: Color(0xFF0F172A), // Black
+                                color: Color(0xFF0F172A),
                               ),
                             ),
                             if (isAwol)
@@ -918,7 +1431,16 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                               ),
                             if (isLate)
                               Text(
-                                'Late by $lateDuration',
+                                attendanceData!['text']!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: statusTextColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            if (isEarlyIn || isEarlyOut)
+                              Text(
+                                attendanceData!['text']!,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: statusTextColor,
@@ -928,7 +1450,6 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                           ],
                         ),
                       ),
-                      // 3-dot menu button
                       GestureDetector(
                         onTap: () =>
                             _showActionMenu(context, memberKey, crewName),
@@ -939,7 +1460,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                             child: Icon(
                               Icons.more_vert,
                               size: 20,
-                              color: const Color.fromARGB(255, 0, 0, 0),
+                              color: const Color(0xFF0F172A),
                             ),
                           ),
                         ),
@@ -1021,7 +1542,7 @@ class _ManagerTeamPageState extends State<ManagerTeamPage> {
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
-                    color: Color(0xFF0F172A), // Black
+                    color: Color(0xFF0F172A),
                   ),
                 ),
                 const SizedBox(height: 4),

@@ -1,4 +1,7 @@
+import 'package:escheduler/features/crew/dashboard/pages/crew_change_password.dart';
 import 'package:flutter/material.dart';
+import 'package:escheduler/features/auth/login_page.dart';
+import 'package:escheduler/features/crew/dashboard/pages/crew_shift_history.dart';
 
 class CrewProfilePage extends StatelessWidget {
   const CrewProfilePage({Key? key}) : super(key: key);
@@ -7,13 +10,15 @@ class CrewProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Header with gradient
-              Container(
-                padding: const EdgeInsets.all(20),
+      body: CustomScrollView(
+        slivers: [
+          // Header with gradient
+          SliverAppBar(
+            expandedHeight: 220,
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -24,158 +29,361 @@ class CrewProfilePage extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Text(
-                          'Profile',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                child: SafeArea(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 3,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 46,
+                              backgroundColor: Colors.white,
+                              child: const Text(
+                                'JD',
+                                style: TextStyle(
+                                  color: Color(0xFF1E3A8A),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 32,
+                                ),
+                              ),
+                            ),
                           ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1E3A8A),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.edit_rounded,
+                                color: Colors.white,
+                                size: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'John Sindicato',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.settings_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'CREW ID: CM2024-1234',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Main content
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                children: [
+                  // Personal Information Section
+                  _sectionHeader('Personal Information'),
+                  const SizedBox(height: 12),
+                  _buildInfoCard(
+                    icon: Icons.person_outline_rounded,
+                    title: 'Personal Details',
+                    items: [
+                      _buildInfoRow('Email', 'john.s@eschedule.com'),
+                      _buildInfoRow('Phone', '+1 (555) 123-4567'),
+                      _buildInfoRow('Address', '123 Main St, Anytown, USA'),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Availability Section
+                  _sectionHeader('Availability'),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8), // Reduced to 8
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.white,
-                      child: const Text(
-                        'JD',
-                        style: TextStyle(
-                          color: Color(0xFF1E3A8A), // BLUE THEME
-                          fontWeight: FontWeight.bold,
-                          fontSize: 32,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today_rounded,
+                              color: Color(0xFF1E3A8A),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Weekly Availability',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1A1D1F),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        _buildAvailabilityDay('Monday', '9AM - 5PM'),
+                        _buildAvailabilityDay('Tuesday', '1PM - 9PM'),
+                        _buildAvailabilityDay('Wednesday', 'Flexible'),
+                        _buildAvailabilityDay('Thursday', '9AM - 5PM'),
+                        _buildAvailabilityDay('Friday', '3PM - 11PM'),
+                        _buildAvailabilityDay('Saturday', 'Flexible'),
+                        _buildAvailabilityDay('Sunday', 'Flexible'),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'John Sindicato',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Shift History Button
+                  _buildActionButton(
+                    icon: Icons.history_rounded,
+                    title: 'Shift History',
+                    subtitle: 'View your past shifts',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CrewShiftHistoryPage(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Change Password Button
+                  _buildActionButton(
+                    icon: Icons.lock_rounded,
+                    title: 'Change Password',
+                    subtitle: 'Update your account password',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CrewChangePasswordPage(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Logout Button
+                  GestureDetector(
+                    onTap: () => _showLogoutConfirmation(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
                         color: Colors.white,
+                        borderRadius: BorderRadius.circular(8), // Reduced to 8
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFB91C1C).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(
+                                8,
+                              ), // Reduced to 8
+                            ),
+                            child: const Icon(
+                              Icons.logout_rounded,
+                              color: Color(0xFFB91C1C),
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFB91C1C),
+                                  ),
+                                ),
+                                Text(
+                                  'Sign out of your account',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 16,
+                            color: Color(0xFFB91C1C),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Crew Member • ID: CM2024-1234',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
               ),
-
-              const SizedBox(height: 20),
-
-              // Stats Row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildProfileStat(
-                        '152',
-                        'Total Shifts',
-                        Icons.calendar_month_rounded,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildProfileStat(
-                        '4.8',
-                        'Rating',
-                        Icons.star_rounded,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildProfileStat(
-                        '8 mo',
-                        'Tenure',
-                        Icons.workspace_premium_rounded,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Menu Items
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    _buildMenuItem(
-                      Icons.person_outline_rounded,
-                      'Personal Information',
-                    ),
-                    _buildMenuItem(
-                      Icons.credit_card_rounded,
-                      'Payment & Earnings',
-                    ),
-                    _buildMenuItem(Icons.schedule_rounded, 'Availability'),
-                    _buildMenuItem(Icons.history_rounded, 'Shift History'),
-                    _buildMenuItem(Icons.assessment_rounded, 'Performance'),
-                    _buildMenuItem(
-                      Icons.notifications_outlined,
-                      'Notifications',
-                    ),
-                    _buildMenuItem(
-                      Icons.help_outline_rounded,
-                      'Help & Support',
-                    ),
-                    _buildMenuItem(
-                      Icons.privacy_tip_outlined,
-                      'Privacy Policy',
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    _buildMenuItem(
-                      Icons.logout_rounded,
-                      'Logout',
-                      isLogout: true,
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // BLUE STAT CARDS
-  Widget _buildProfileStat(String value, String label, IconData icon) {
+  void _showLogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Are you sure you want to logout?',
+                  style: TextStyle(fontSize: 15, color: Color(0xFF1A1D1F)),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF64748B),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFB91C1C),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _sectionHeader(String title) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1A1D1F),
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required List<Widget> items,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8), // Reduced to 8
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -185,69 +393,167 @@ class CrewProfilePage extends StatelessWidget {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Color(0xFF1E3A8A), size: 24), // BLUE ICON
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1A1D1F),
+          Row(
+            children: [
+              Icon(icon, color: const Color(0xFF1E3A8A), size: 20),
+              const SizedBox(width: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1A1D1F),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...items,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+          Expanded(
+            flex: 2,
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF1A1D1F),
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.right,
+            ),
           ),
         ],
       ),
     );
   }
 
-  // MENU ITEMS
-  Widget _buildMenuItem(IconData icon, String title, {bool isLogout = false}) {
-    const blackColor = Color(0xFF1A1D1F); // Black for text and icon
-    const darkRed = Color(0xFFB91C1C); // Darker red for logout
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+  Widget _buildAvailabilityDay(String day, String hours) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              day,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF1A1D1F),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: hours == 'Flexible'
+                    ? const Color(0xFF1E3A8A).withOpacity(0.08)
+                    : const Color(0xFF1E3A8A).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(8), // Reduced to 8
+              ),
+              child: Text(
+                hours,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1E3A8A),
+                ),
+              ),
+            ),
           ),
         ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-        ), // closer to icon
-        leading: Icon(
-          icon,
-          color: isLogout ? darkRed : blackColor, // black for regular items
-          size: 20,
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8), // Reduced to 8
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isLogout ? darkRed : blackColor,
-          ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E3A8A).withOpacity(0.08),
+                borderRadius: BorderRadius.circular(8), // Reduced to 8
+              ),
+              child: Icon(icon, color: const Color(0xFF1E3A8A), size: 20),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1D1F),
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E3A8A).withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 12,
+                color: Color(0xFF1E3A8A),
+              ),
+            ),
+          ],
         ),
-        trailing: Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 16,
-          color: Colors.grey[400],
-        ),
-        onTap: () {},
       ),
     );
   }

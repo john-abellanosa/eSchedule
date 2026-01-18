@@ -296,15 +296,6 @@ class _CrewRequestPageState extends State<CrewRequestPage>
                 fontWeight: FontWeight.w600,
               ),
             ),
-            // const SizedBox(height: 2),
-            // Text(
-            //   'Manage all your shift requests here',
-            //   style: TextStyle(
-            //     color: Colors.white.withOpacity(0.85),
-            //     fontSize: 12,
-            //     fontWeight: FontWeight.w400,
-            //   ),
-            // ),
           ],
         ),
         actions: [
@@ -340,7 +331,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
                 Tab(text: 'My Requests'),
                 Tab(text: 'Swap Offers'),
                 Tab(text: 'Shift Offers'),
-                Tab(text: 'Admin/RGM Approval'),
+                Tab(text: 'Admin Approval'),
                 Tab(text: 'Scheduler Approval'),
                 Tab(text: 'History'),
               ],
@@ -446,7 +437,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _sectionHeader('Admin/RGM Approval Status'),
+          _sectionHeader('Admin Approval Status'),
 
           const SizedBox(height: 16),
           if (_adminApproval.isEmpty)
@@ -1791,28 +1782,6 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         ],
       ),
     );
-  }
-
-  IconData _getHistoryIcon(String type, String status) {
-    if (type == 'Leave') {
-      return Icons.beach_access;
-    } else if (type == 'Swap') {
-      return Icons.swap_horiz;
-    } else if (type == 'Give Away') {
-      return Icons.gesture;
-    } else if (type == 'Approval') {
-      return Icons.approval;
-    }
-
-    if (status == 'Approved' || status == 'Completed') {
-      return Icons.check_circle;
-    } else if (status == 'Declined') {
-      return Icons.cancel;
-    } else if (status == 'Cancelled') {
-      return Icons.block;
-    }
-
-    return Icons.history;
   }
 
   void _showNewRequestDialog(BuildContext context) {

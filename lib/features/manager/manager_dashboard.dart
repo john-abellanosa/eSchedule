@@ -80,8 +80,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                   smallerPadding: true,
                 ),
                 _navItem(
-                  Icons.bar_chart_rounded,
-                  'Reports',
+                  Icons.person_rounded,
+                  'Profile',
                   4,
                   smallerPadding: true,
                 ),

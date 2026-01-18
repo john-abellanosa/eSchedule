@@ -10,187 +10,367 @@ class ManagerSchedulePage extends StatefulWidget {
 
 class _ManagerSchedulePageState extends State<ManagerSchedulePage> {
   int selectedWeek = 0; // 0=this 1=next 2=month
+  final DateFormat _dateFormatter = DateFormat('MMM d');
+  final DateFormat _monthFormatter = DateFormat('MMMM yyyy');
+  final DateFormat _weekRangeFormatter = DateFormat('MMM d');
 
-  final Map<int, List<Map<String, dynamic>>> _weekData = {
-    0: [
+  // Store the actual data for each view
+  late Map<int, List<Map<String, dynamic>>> _weekData;
+  late Map<String, String> _weekRanges; // Store week ranges
+
+  @override
+  void initState() {
+    super.initState();
+    _weekRanges = {
+      '0': 'Jan 18 - Jan 24',
+      '1': 'Jan 25 - Jan 31',
+      '2': 'JANUARY 2024',
+    };
+    _weekData = _generateScheduleData();
+  }
+
+  Map<int, List<Map<String, dynamic>>> _generateScheduleData() {
+    // THIS WEEK (Jan 18-24) - Manager Schedule
+    final thisWeekData = [
+      {
+        'day': 'Thursday',
+        'date': 'Jan 18',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
+      },
+      {
+        'day': 'Friday',
+        'date': 'Jan 19',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
+      },
+      {
+        'day': 'Saturday',
+        'date': 'Jan 20',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Shift Leader',
+      },
+      {
+        'day': 'Sunday',
+        'date': 'Jan 21',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'Expediter',
+      },
       {
         'day': 'Monday',
-        'date': 'Dec 9',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
+        'date': 'Jan 22',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'B2B',
       },
       {
         'day': 'Tuesday',
-        'date': 'Dec 10',
-        'time': '8:00 AM - 5:00 PM',
-        'role': 'Floor Manager',
-        'responsibilities': 'Customer service, staff training',
-        'color': const Color(0xFFF59E0B),
+        'date': 'Jan 23',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
       },
       {
         'day': 'Wednesday',
-        'date': 'Dec 11',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
+        'date': 'Jan 24',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
       },
+    ];
+
+    // NEXT WEEK (Jan 25-31) - Manager Schedule
+    final nextWeekData = [
       {
         'day': 'Thursday',
-        'date': 'Dec 12',
-        'time': '12:00 PM - 9:00 PM',
-        'role': 'Closing Manager',
-        'responsibilities': 'End-of-day reports, closing duties',
-        'color': const Color(0xFF8B5CF6),
+        'date': 'Jan 25',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'Shift Leader',
       },
       {
         'day': 'Friday',
-        'date': 'Dec 13',
-        'time': '8:00 AM - 5:00 PM',
-        'role': 'Floor Manager',
-        'responsibilities': 'Customer service, staff training',
-        'color': const Color(0xFFF59E0B),
+        'date': 'Jan 26',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'Expediter',
       },
-      {'day': 'Saturday', 'date': 'Dec 14', 'off': true},
-      {'day': 'Sunday', 'date': 'Dec 15', 'off': true},
-    ],
-    1: [
+      {
+        'day': 'Saturday',
+        'date': 'Jan 27',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'B2B',
+      },
+      {
+        'day': 'Sunday',
+        'date': 'Jan 28',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
+      },
       {
         'day': 'Monday',
-        'date': 'Dec 16',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
+        'date': 'Jan 29',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
       },
       {
         'day': 'Tuesday',
-        'date': 'Dec 17',
-        'time': '12:00 PM - 9:00 PM',
-        'role': 'Closing Manager',
-        'responsibilities': 'End-of-day reports, closing duties',
-        'color': const Color(0xFF8B5CF6),
-      },
-      {'day': 'Wednesday', 'date': 'Dec 18', 'off': true},
-      {
-        'day': 'Thursday',
-        'date': 'Dec 19',
-        'time': '8:00 AM - 5:00 PM',
-        'role': 'Floor Manager',
-        'responsibilities': 'Customer service, staff training',
-        'color': const Color(0xFFF59E0B),
-      },
-      {
-        'day': 'Friday',
-        'date': 'Dec 20',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
-      },
-      {'day': 'Saturday', 'date': 'Dec 21', 'off': true},
-      {'day': 'Sunday', 'date': 'Dec 22', 'off': true},
-    ],
-    2: [
-      // Month view data
-      {
-        'day': 'Monday',
-        'date': 'Dec 9',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
-      },
-      {
-        'day': 'Tuesday',
-        'date': 'Dec 10',
-        'time': '8:00 AM - 5:00 PM',
-        'role': 'Floor Manager',
-        'responsibilities': 'Customer service, staff training',
-        'color': const Color(0xFFF59E0B),
+        'date': 'Jan 30',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'Shift Leader',
       },
       {
         'day': 'Wednesday',
-        'date': 'Dec 11',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
+        'date': 'Jan 31',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Expediter',
       },
-      {
-        'day': 'Thursday',
-        'date': 'Dec 12',
-        'time': '12:00 PM - 9:00 PM',
-        'role': 'Closing Manager',
-        'responsibilities': 'End-of-day reports, closing duties',
-        'color': const Color(0xFF8B5CF6),
-      },
-      {
-        'day': 'Friday',
-        'date': 'Dec 13',
-        'time': '8:00 AM - 5:00 PM',
-        'role': 'Floor Manager',
-        'responsibilities': 'Customer service, staff training',
-        'color': const Color(0xFFF59E0B),
-      },
-      {'day': 'Saturday', 'date': 'Dec 14', 'off': true},
-      {'day': 'Sunday', 'date': 'Dec 15', 'off': true},
+    ];
+
+    // JANUARY data - Jan 1-31
+    final monthData = <Map<String, dynamic>>[];
+
+    // Create a map to store specific dates data
+    final Map<String, Map<String, dynamic>> specificDates = {};
+
+    // Add This Week data to specific dates
+    for (var day in thisWeekData) {
+      specificDates[day['date'] as String] = day;
+    }
+
+    // Add Next Week data to specific dates
+    for (var day in nextWeekData) {
+      specificDates[day['date'] as String] = day;
+    }
+
+    // Add data for Jan 1-17
+    final jan1to17Data = [
       {
         'day': 'Monday',
-        'date': 'Dec 16',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
+        'date': 'Jan 1',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
       },
       {
         'day': 'Tuesday',
-        'date': 'Dec 17',
-        'time': '12:00 PM - 9:00 PM',
-        'role': 'Closing Manager',
-        'responsibilities': 'End-of-day reports, closing duties',
-        'color': const Color(0xFF8B5CF6),
+        'date': 'Jan 2',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
       },
-      {'day': 'Wednesday', 'date': 'Dec 18', 'off': true},
+      {
+        'day': 'Wednesday',
+        'date': 'Jan 3',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'Shift Leader',
+      },
       {
         'day': 'Thursday',
-        'date': 'Dec 19',
-        'time': '8:00 AM - 5:00 PM',
-        'role': 'Floor Manager',
-        'responsibilities': 'Customer service, staff training',
-        'color': const Color(0xFFF59E0B),
+        'date': 'Jan 4',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Expediter',
       },
       {
         'day': 'Friday',
-        'date': 'Dec 20',
-        'time': '7:00 AM - 4:00 PM',
-        'role': 'Opening Manager',
-        'responsibilities': 'Staff coordination, inventory check',
-        'color': const Color(0xFFEF4444),
+        'date': 'Jan 5',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'B2B',
       },
-      {'day': 'Saturday', 'date': 'Dec 21', 'off': true},
-      {'day': 'Sunday', 'date': 'Dec 22', 'off': true},
-    ],
-  };
+      {
+        'day': 'Saturday',
+        'date': 'Jan 6',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
+      },
+      {
+        'day': 'Sunday',
+        'date': 'Jan 7',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
+      },
+      {
+        'day': 'Monday',
+        'date': 'Jan 8',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Shift Leader',
+      },
+      {
+        'day': 'Tuesday',
+        'date': 'Jan 9',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Expediter',
+      },
+      {
+        'day': 'Wednesday',
+        'date': 'Jan 10',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'B2B',
+      },
+      {
+        'day': 'Thursday',
+        'date': 'Jan 11',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
+      },
+      {
+        'day': 'Friday',
+        'date': 'Jan 12',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
+      },
+      {
+        'day': 'Saturday',
+        'date': 'Jan 13',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Shift Leader',
+      },
+      {
+        'day': 'Sunday',
+        'date': 'Jan 14',
+        'time': '11:00 AM - 9:00 PM',
+        'break': '4:00 PM',
+        'hours': 10,
+        'position': 'Expediter',
+      },
+      {
+        'day': 'Monday',
+        'date': 'Jan 15',
+        'time': '8:00 AM - 6:00 PM',
+        'break': '1:00 PM',
+        'hours': 10,
+        'position': 'B2B',
+      },
+      {
+        'day': 'Tuesday',
+        'date': 'Jan 16',
+        'time': '9:00 AM - 7:00 PM',
+        'break': '2:00 PM',
+        'hours': 10,
+        'position': 'Service Manager',
+      },
+      {
+        'day': 'Wednesday',
+        'date': 'Jan 17',
+        'time': '10:00 AM - 8:00 PM',
+        'break': '3:00 PM',
+        'hours': 10,
+        'position': 'Manager In-Charge',
+      },
+    ];
+
+    // Add Jan 1-17 data to specific dates
+    for (var day in jan1to17Data) {
+      specificDates[day['date'] as String] = day;
+    }
+
+    // Generate all days of January (1-31)
+    for (int day = 1; day <= 31; day++) {
+      final dateStr = 'Jan $day';
+      final weekday = _getWeekdayForDate(2024, 1, day);
+
+      if (specificDates.containsKey(dateStr)) {
+        // Use the specific data for this date
+        monthData.add(specificDates[dateStr]!);
+      } else {
+        // For any unspecified dates (shouldn't happen in our case)
+        monthData.add({
+          'day': weekday,
+          'date': dateStr,
+          'time': '8:00 AM - 6:00 PM',
+          'break': '1:00 PM',
+          'hours': 10,
+          'position': 'Service Manager',
+        });
+      }
+    }
+
+    return {0: thisWeekData, 1: nextWeekData, 2: monthData};
+  }
+
+  String _getWeekdayForDate(int year, int month, int day) {
+    final date = DateTime(year, month, day);
+    final weekdays = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    return weekdays[date.weekday - 1];
+  }
+
+  String get _currentDateDisplay {
+    return _weekRanges[selectedWeek.toString()] ?? '';
+  }
+
+  String get _currentDateSubtitle {
+    if (selectedWeek == 2) {
+      return 'MONTH SCHEDULE';
+    }
+    return 'WEEK SCHEDULE';
+  }
 
   @override
   Widget build(BuildContext context) {
     final data = _weekData[selectedWeek] ?? [];
-    int totalHours = 0;
-    for (var d in data) {
-      if (d['off'] != true)
-        totalHours += 9; // Manager shifts are typically 9 hours
-    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
+        preferredSize: const Size.fromHeight(110),
         child: Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: Color(0xFF1E3A8A),
             boxShadow: [
               BoxShadow(
                 color: Color(0x140F172A),
@@ -201,36 +381,68 @@ class _ManagerSchedulePageState extends State<ManagerSchedulePage> {
           ),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'My Schedule',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A),
-                          letterSpacing: -0.1,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _currentDateDisplay,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _currentDateSubtitle,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withOpacity(0.8),
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                       const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          // Toggle calendar view if needed
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1E3A8A).withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 1,
                           ),
-                          child: const Icon(
-                            Icons.calendar_today_rounded,
-                            color: Color(0xFF1E3A8A),
-                            size: 18,
-                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today_rounded,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Jan 18',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -239,9 +451,9 @@ class _ManagerSchedulePageState extends State<ManagerSchedulePage> {
                   Row(
                     children: [
                       Expanded(child: _weekTab('This Week', 0)),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Expanded(child: _weekTab('Next Week', 1)),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Expanded(child: _weekTab('Month', 2)),
                     ],
                   ),
@@ -254,66 +466,16 @@ class _ManagerSchedulePageState extends State<ManagerSchedulePage> {
       body: selectedWeek == 2
           ? _monthView()
           : ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemCount: data.length + 1, // +1 for total hours card
-              itemBuilder: (_, i) {
-                if (i == 0) {
-                  // TOTAL HOURS CARD
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time_rounded,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Total Hours This Week',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(.9),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '$totalHours hours',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  // DAYS LIST
-                  return _dayCard(data[i - 1]);
-                }
+              padding: const EdgeInsets.fromLTRB(
+                12,
+                12,
+                12,
+                40,
+              ), // Increased bottom padding from 12 to 40
+              separatorBuilder: (_, __) => const SizedBox(height: 6),
+              itemCount: data.length,
+              itemBuilder: (_, index) {
+                return _dayCard(data[index]);
               },
             ),
     );
@@ -326,18 +488,22 @@ class _ManagerSchedulePageState extends State<ManagerSchedulePage> {
         selectedWeek = index;
       }),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF1E3A8A) : const Color(0xFFDCE6FF),
-          borderRadius: BorderRadius.circular(8),
+          color: selected ? Colors.white : Colors.white.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: selected ? const Color(0xFF1E3A8A) : Colors.transparent,
+            width: 1.5,
+          ),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: selected ? Colors.white : const Color(0xFF1E3A8A),
+            color: selected ? const Color(0xFF1E3A8A) : Colors.white,
           ),
         ),
       ),
@@ -345,439 +511,305 @@ class _ManagerSchedulePageState extends State<ManagerSchedulePage> {
   }
 
   Widget _dayCard(Map<String, dynamic> d) {
-    final off = d['off'] == true;
-    final color = d['color'] as Color? ?? Colors.grey;
+    final time = d['time'] as String;
+    final breakTime = d['break'] as String;
+    final hours = d['hours'] as int;
+    final position = d['position'] as String;
+
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE7EBF0)),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE7EBF0), width: 1),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x140F172A),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            color: Color(0x0A0F172A),
+            blurRadius: 6,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: off
-                  ? const Color(0xFFF1F5F9)
-                  : const Color(0xFF1E3A8A).withOpacity(.08),
-              borderRadius: BorderRadius.circular(8),
+              color: const Color(0xFF1E3A8A).withOpacity(.08),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  d['date'].split(' ')[1],
-                  style: TextStyle(
-                    fontSize: 16,
+                  (d['date'] as String).split(' ')[1],
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: off
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF0F172A),
+                    color: Color(0xFF0F172A),
                   ),
                 ),
                 Text(
-                  d['day'].substring(0, 3).toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 9,
+                  (d['day'] as String).substring(0, 3).toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: off
-                        ? const Color(0xFF94A3B8)
-                        : const Color(0xFF64748B),
+                    color: Color(0xFF64748B),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
-            child: off
-                ? const Text(
-                    'Day Off',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF94A3B8),
-                    ),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        d['time'],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Main shift time row
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        time,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF0F172A),
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1E3A8A),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              d['role'],
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 1,
                       ),
-                    ],
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF10B981),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Text(
+                        '${hours}h',
+                        style: const TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Break time row
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.coffee_outlined,
+                      size: 10,
+                      color: const Color(0xFF64748B).withOpacity(0.8),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Break at $breakTime',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B).withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Position tag - Dark Blue
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
                   ),
-          ),
-          if (!off)
-            IconButton(
-              icon: const Icon(
-                Icons.info_outline,
-                size: 20,
-                color: Color(0xFF64748B),
-              ),
-              onPressed: () => _showShiftDetails(d),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E3A8A), // Dark Blue
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    position,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
+          ),
         ],
       ),
     );
   }
 
   Widget _monthView() {
-    final now = DateTime.now();
-    final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-    final daysInMonth = lastDayOfMonth.day;
-
-    int totalHours = 0;
-    for (var d in _weekData[2] ?? []) {
-      if (d['off'] != true) totalHours += 9;
-    }
+    final data = _weekData[2] ?? [];
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      itemCount: daysInMonth + 2,
+      padding: const EdgeInsets.fromLTRB(
+        12,
+        12,
+        12,
+        40,
+      ), // Increased bottom padding from 12 to 40
+      itemCount: data.length,
       itemBuilder: (context, index) {
-        if (index == 0) {
-          // TOTAL HOURS CARD
-          return Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.access_time_rounded,
-                  color: Colors.white,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Total Hours This Month',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(.9),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$totalHours hours',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        } else if (index == 1) {
-          return const SizedBox(height: 8);
-        } else {
-          final day = firstDayOfMonth.add(Duration(days: index - 2));
-          final List<Map<String, dynamic>> monthData =
-              _weekData[2] ?? const <Map<String, dynamic>>[];
-          final Map<String, dynamic> dayData = monthData.firstWhere(
-            (d) => d['date'] == DateFormat('MMM d').format(day),
-            orElse: () => {'off': true},
-          );
+        final dayData = data[index];
+        final time = dayData['time'] as String;
+        final breakTime = dayData['break'] as String;
+        final hours = dayData['hours'] as int;
+        final position = dayData['position'] as String;
+        final dateString = dayData['date'] as String;
 
-          return Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFE7EBF0)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x140F172A),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: dayData['off'] == true
-                        ? const Color(0xFFF1F5F9)
-                        : const Color(0xFF1E3A8A).withOpacity(.08),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        day.day.toString(),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: dayData['off'] == true
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF0F172A),
-                        ),
-                      ),
-                      Text(
-                        DateFormat('EEE').format(day).toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: dayData['off'] == true
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: dayData['off'] == true
-                      ? const Text(
-                          'Day Off',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF94A3B8),
-                          ),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              dayData['time'],
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF0F172A),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1E3A8A),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                dayData['role'],
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-                if (dayData['off'] != true)
-                  IconButton(
-                    icon: const Icon(
-                      Icons.info_outline,
-                      size: 20,
-                      color: Color(0xFF64748B),
-                    ),
-                    onPressed: () => _showShiftDetails(dayData),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-              ],
-            ),
-          );
-        }
-      },
-    );
-  }
+        // Parse the date from the string (e.g., "Jan 9")
+        final dateParts = dateString.split(' ');
+        final day = int.parse(dateParts[1]);
 
-  void _showShiftDetails(Map<String, dynamic> shift) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Container(
-          padding: const EdgeInsets.all(20),
+        // Get the day name from the data
+        final dayName = dayData['day'] as String;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 6),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.info_outline,
-                    color: Color(0xFF1E3A8A),
-                    size: 22,
-                  ),
-                  const SizedBox(width: 8),
-                  const Expanded(
-                    child: Text(
-                      'Shift Details',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 20),
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F7FA),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: [
-                    _dialogRow('Day:', shift['day']),
-                    const SizedBox(height: 8),
-                    _dialogRow('Date:', shift['date']),
-                    const SizedBox(height: 8),
-                    _dialogRow('Time:', shift['time']),
-                    const SizedBox(height: 8),
-                    _dialogRow('Role:', shift['role']),
-                    const SizedBox(height: 8),
-                    _dialogRow('Tasks:', shift['responsibilities']),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E3A8A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                    ),
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text(
-                      'Close',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFE7EBF0), width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0A0F172A),
+                blurRadius: 6,
+                offset: Offset(0, 2),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E3A8A).withOpacity(.08),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      day.toString(),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    Text(
+                      dayName.substring(0, 3).toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Main shift time row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            time,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF0F172A),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            '${hours}h',
+                            style: const TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
 
-  Widget _dialogRow(String label, String value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF64748B),
+                    // Break time row
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.coffee_outlined,
+                          size: 10,
+                          color: const Color(0xFF64748B).withOpacity(0.8),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Break at $breakTime',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF64748B).withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Position tag - Dark Blue
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E3A8A), // Dark Blue
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        position,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-            ),
-            textAlign: TextAlign.right,
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

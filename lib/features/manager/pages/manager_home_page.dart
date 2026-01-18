@@ -1,5 +1,6 @@
 import 'package:escheduler/features/manager/pages/manager_notification.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Add this import
 
 class ManagerHomePage extends StatelessWidget {
   const ManagerHomePage({Key? key}) : super(key: key);
@@ -11,6 +12,7 @@ class ManagerHomePage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            automaticallyImplyLeading: false,
             pinned: true,
             elevation: 0,
             backgroundColor: Colors.transparent,
@@ -47,25 +49,25 @@ class ManagerHomePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
+                                'Welcome Manager',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text(
                                 'John Doe',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                'Service Manager',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 11,
                                 ),
                               ),
                             ],
@@ -107,78 +109,16 @@ class ManagerHomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildMetrics(),
+                  // Real-time date and time
+                  _buildDateTimeWidget(),
                   const SizedBox(height: 16),
 
-                  // _sectionHeader('Quick Actions'),
-                  // const SizedBox(height: 12),
-                  // _buildQuickActions(context),
-                  // const SizedBox(height: 16),
-                  _sectionHeader(
-                    'Upcoming Shifts',
-                    trailing: _mutedAction('View All'),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildShiftItem(
-                    'Tomorrow',
-                    'Dec 13',
-                    '8:00 AM - 4:00 PM',
-                    'Management',
-                    const Color(0xFF06B6D4),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildShiftItem(
-                    'Saturday',
-                    'Dec 14',
-                    '10:00 AM - 6:00 PM',
-                    'Supervision',
-                    const Color(0xFF8B5CF6),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildShiftItem(
-                    'Sunday',
-                    'Dec 15',
-                    '12:00 PM - 8:00 PM',
-                    'Management',
-                    const Color(0xFF667EEA),
-                  ),
+                  _buildMetrics(),
                   const SizedBox(height: 24),
 
-                  _sectionHeader(
-                    'Staff Overview',
-                    trailing: _mutedAction('View All'),
-                  ),
+                  _sectionHeader('Announcements'),
                   const SizedBox(height: 12),
-                  _buildStaffStatus(
-                    'Morning Shift',
-                    '6:00 AM - 2:00 PM',
-                    5,
-                    5,
-                    const Color(0xFF10B981),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildStaffStatus(
-                    'Afternoon Shift',
-                    '2:00 PM - 10:00 PM',
-                    4,
-                    6,
-                    const Color(0xFFF59E0B),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildStaffStatus(
-                    'Night Shift',
-                    '10:00 PM - 6:00 AM',
-                    3,
-                    4,
-                    const Color(0xFF06B6D4),
-                  ),
-                  const SizedBox(height: 24),
 
-                  _sectionHeader(
-                    'Announcements',
-                    trailing: _mutedAction('Create New'),
-                  ),
-                  const SizedBox(height: 12),
                   _buildAnnouncement(
                     'Holiday Schedule Update',
                     'The holiday schedule for December 24-26 has been posted. Please check your shifts.',
@@ -197,6 +137,46 @@ class ManagerHomePage extends StatelessWidget {
                     '5 days ago',
                   ),
                   const SizedBox(height: 24),
+
+                  // Crew Overview
+                  _sectionHeader('Crew Overview'),
+                  const SizedBox(height: 12),
+
+                  // Graveyard Shift (12:00AM - 06:00AM)
+                  _buildCrewShiftItem(
+                    title: 'Graveyard',
+                    timeRange: '12:00AM - 06:00AM',
+                    crewCount: 8,
+                    icon: Icons.night_shelter_outlined,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Morning Shift (06:00AM - 12:00PM)
+                  _buildCrewShiftItem(
+                    title: 'Morning',
+                    timeRange: '06:00AM - 12:00PM',
+                    crewCount: 15,
+                    icon: Icons.wb_sunny_outlined,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Afternoon Shift (12:00PM - 06:00PM)
+                  _buildCrewShiftItem(
+                    title: 'Afternoon',
+                    timeRange: '12:00PM - 06:00PM',
+                    crewCount: 12,
+                    icon: Icons.sunny,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Evening Shift (06:00PM - 12:00AM)
+                  _buildCrewShiftItem(
+                    title: 'Evening',
+                    timeRange: '06:00PM - 12:00AM',
+                    crewCount: 10,
+                    icon: Icons.nights_stay_outlined,
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -206,19 +186,103 @@ class ManagerHomePage extends StatelessWidget {
     );
   }
 
+  // Real-time date and time widget
+  Widget _buildDateTimeWidget() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: StreamBuilder<DateTime>(
+        stream: Stream.periodic(
+          const Duration(seconds: 1),
+          (_) => DateTime.now(),
+        ),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const SizedBox();
+          }
+
+          final now = snapshot.data!;
+          final dateFormat = DateFormat(
+            'EEEE, MMMM d, y',
+          ); // Example: Monday, December 12, 2023
+          final timeFormat = DateFormat('hh:mm:ss a'); // Example: 02:30:45 PM
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dateFormat.format(now),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1E3A8A),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Current Date & Time',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E3A8A),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  timeFormat.format(now),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildMetrics() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -320,172 +384,136 @@ class ManagerHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildShiftItem(
-    String day,
-    String date,
-    String time,
-    String dept,
-    Color color,
-  ) {
+  Widget _buildCrewShiftItem({
+    required String title,
+    required String timeRange,
+    required int crewCount,
+    required IconData icon,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12), // Reduced from 16
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE7EBF0)),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(10), // Reduced from 12
+        boxShadow: [
           BoxShadow(
-            color: Color(0x140F172A),
-            blurRadius: 8,
-            offset: Offset(0, 3),
+            color: const Color(0xFF000000).withOpacity(0.04), // Lighter shadow
+            blurRadius: 8, // Reduced from 12
+            offset: const Offset(0, 2), // Reduced from 4
+            spreadRadius: 0,
           ),
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Compact icon container
           Container(
-            width: 6,
-            height: 6,
-            margin: const EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            width: 40, // Reduced from 48
+            height: 40, // Reduced from 48
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E3A8A),
+              borderRadius: BorderRadius.circular(8), // Reduced from 10
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF1E3A8A).withOpacity(0.15),
+                  blurRadius: 4, // Reduced from 6
+                  offset: const Offset(0, 1), // Reduced from 2
+                ),
+              ],
+            ),
+            child: Center(
+              child: Icon(icon, size: 18, color: Colors.white),
+            ), // Reduced from 22
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12), // Reduced from 16
+          // Shift info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      day,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF0F172A),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 14, // Reduced from 16
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF111827),
+                              letterSpacing: -0.2, // Reduced from -0.3
+                            ),
+                          ),
+                          const SizedBox(height: 2), // Reduced from 4
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_outlined,
+                                size: 12, // Reduced from 14
+                                color: const Color(0xFF6B7280),
+                              ),
+                              const SizedBox(width: 4), // Reduced from 6
+                              Text(
+                                timeRange,
+                                style: const TextStyle(
+                                  fontSize: 12, // Reduced from 13
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF6B7280),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      date,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF94A3B8),
-                        fontWeight: FontWeight.w600,
+
+                    // Compact crew count badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10, // Reduced from 16
+                        vertical: 6, // Reduced from 8
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(
+                          6,
+                        ), // Reduced from 8
+                        border: Border.all(
+                          color: const Color(0xFFE2E8F0),
+                          width: 1, // Reduced from 1.5
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$crewCount',
+                            style: const TextStyle(
+                              fontSize: 16, // Reduced from 20
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF1E3A8A),
+                              letterSpacing: -0.3, // Reduced from -0.5
+                            ),
+                          ),
+                          Text(
+                            'CREW',
+                            style: TextStyle(
+                              fontSize: 9, // Reduced from 10
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF64748B),
+                              letterSpacing: 0.3, // Reduced from 0.5
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  time,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF0F172A),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E3A8A),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    dept,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
               ],
-            ),
-          ),
-          const SizedBox(width: 6),
-          const Icon(Icons.chevron_right, size: 18, color: Color(0xFF94A3B8)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStaffStatus(
-    String title,
-    String time,
-    int filled,
-    int requiredCount,
-    Color color,
-  ) {
-    final double ratio = requiredCount == 0
-        ? 0
-        : (filled / requiredCount).clamp(0, 1).toDouble();
-    final int percentage = (ratio * 100).round();
-
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE7EBF0)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x140F172A),
-            blurRadius: 8,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0F172A),
-                ),
-              ),
-              Text(
-                '$filled/$requiredCount',
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Color(0xFF64748B),
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 3),
-          Text(
-            time,
-            style: const TextStyle(fontSize: 10, color: Color(0xFF64748B)),
-          ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: ratio,
-              minHeight: 6,
-              backgroundColor: const Color(0xFFE2E8F0),
-              valueColor: AlwaysStoppedAnimation<Color>(color.withOpacity(0.9)),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '$percentage%',
-            style: const TextStyle(
-              fontSize: 10,
-              color: Color(0xFF64748B),
-              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -560,25 +588,6 @@ class ManagerHomePage extends StatelessWidget {
         ),
         if (trailing != null) trailing,
       ],
-    );
-  }
-
-  Widget _mutedAction(String label) {
-    return TextButton(
-      onPressed: () {},
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-        minimumSize: const Size(36, 24),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 10,
-          color: Color(0xFF1E3A8A),
-          fontWeight: FontWeight.w700,
-        ),
-      ),
     );
   }
 }
