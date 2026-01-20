@@ -1,7 +1,7 @@
-import 'package:escheduler/features/crew/dashboard/pages/crew_change_password.dart';
 import 'package:flutter/material.dart';
+import 'package:escheduler/features/crew/pages/crew_change_password.dart';
+import 'package:escheduler/features/crew/pages/crew_shift_history.dart';
 import 'package:escheduler/features/auth/login_page.dart';
-import 'package:escheduler/features/crew/dashboard/pages/crew_shift_history.dart';
 
 class CrewProfilePage extends StatelessWidget {
   const CrewProfilePage({Key? key}) : super(key: key);

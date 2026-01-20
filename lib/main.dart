@@ -1,7 +1,7 @@
-import 'package:escheduler/features/crew/dashboard/crew_dashboard.dart';
-import 'package:escheduler/features/auth/forgot_password.dart';
-import 'package:escheduler/features/auth/login_page.dart';
-import 'package:escheduler/features/manager/manager_dashboard.dart';
+import 'package:escheduler/Features/crew/dashboard/crew_dashboard.dart';
+import 'package:escheduler/Features/auth/forgot_password.dart';
+import 'package:escheduler/Features/auth/login_page.dart';
+import 'package:escheduler/Features/manager/manager_dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {

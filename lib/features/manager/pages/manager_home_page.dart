@@ -1,6 +1,6 @@
-import 'package:escheduler/features/manager/pages/manager_notification.dart';
+import 'package:escheduler/Features/manager/pages/manager_notification.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Add this import
+import 'package:intl/intl.dart';
 
 class ManagerHomePage extends StatelessWidget {
   const ManagerHomePage({Key? key}) : super(key: key);
@@ -77,9 +77,7 @@ class ManagerHomePage extends StatelessWidget {
                         Container(
                           decoration: BoxDecoration(
                             color: Color(0xFF1E3A8A),
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // Border radius
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: IconButton(
                             icon: const Icon(
@@ -109,7 +107,6 @@ class ManagerHomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Real-time date and time
                   _buildDateTimeWidget(),
                   const SizedBox(height: 16),
 
@@ -138,7 +135,6 @@ class ManagerHomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Crew Overview
                   _sectionHeader('Crew Overview'),
                   const SizedBox(height: 12),
 
@@ -186,7 +182,6 @@ class ManagerHomePage extends StatelessWidget {
     );
   }
 
-  // Real-time date and time widget
   Widget _buildDateTimeWidget() {
     return Container(
       width: double.infinity,
@@ -213,10 +208,8 @@ class ManagerHomePage extends StatelessWidget {
           }
 
           final now = snapshot.data!;
-          final dateFormat = DateFormat(
-            'EEEE, MMMM d, y',
-          ); // Example: Monday, December 12, 2023
-          final timeFormat = DateFormat('hh:mm:ss a'); // Example: 02:30:45 PM
+          final dateFormat = DateFormat('EEE, MMMM d, y');
+          final timeFormat = DateFormat('hh:mm:ss a');
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -391,124 +384,107 @@ class ManagerHomePage extends StatelessWidget {
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12), // Reduced from 16
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10), // Reduced from 12
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF000000).withOpacity(0.04), // Lighter shadow
-            blurRadius: 8, // Reduced from 12
-            offset: const Offset(0, 2), // Reduced from 4
+            color: const Color(0xFF000000).withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
             spreadRadius: 0,
           ),
         ],
       ),
       child: Row(
         children: [
-          // Compact icon container
           Container(
-            width: 40, // Reduced from 48
-            height: 40, // Reduced from 48
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: const Color(0xFF1E3A8A),
-              borderRadius: BorderRadius.circular(8), // Reduced from 10
+              borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
                   color: const Color(0xFF1E3A8A).withOpacity(0.15),
-                  blurRadius: 4, // Reduced from 6
-                  offset: const Offset(0, 1), // Reduced from 2
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
                 ),
               ],
             ),
-            child: Center(
-              child: Icon(icon, size: 18, color: Colors.white),
-            ), // Reduced from 22
+            child: Center(child: Icon(icon, size: 18, color: Colors.white)),
           ),
-          const SizedBox(width: 12), // Reduced from 16
-          // Shift info
+          const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 14, // Reduced from 16
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF111827),
-                              letterSpacing: -0.2, // Reduced from -0.3
-                            ),
-                          ),
-                          const SizedBox(height: 2), // Reduced from 4
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time_outlined,
-                                size: 12, // Reduced from 14
-                                color: const Color(0xFF6B7280),
-                              ),
-                              const SizedBox(width: 4), // Reduced from 6
-                              Text(
-                                timeRange,
-                                style: const TextStyle(
-                                  fontSize: 12, // Reduced from 13
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF6B7280),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Compact crew count badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10, // Reduced from 16
-                        vertical: 6, // Reduced from 8
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(
-                          6,
-                        ), // Reduced from 8
-                        border: Border.all(
-                          color: const Color(0xFFE2E8F0),
-                          width: 1, // Reduced from 1.5
+                // Shift info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF111827),
+                          letterSpacing: -0.2,
                         ),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                      const SizedBox(height: 2),
+                      Row(
                         children: [
-                          Text(
-                            '$crewCount',
-                            style: const TextStyle(
-                              fontSize: 16, // Reduced from 20
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF1E3A8A),
-                              letterSpacing: -0.3, // Reduced from -0.5
-                            ),
+                          Icon(
+                            Icons.access_time_outlined,
+                            size: 12,
+                            color: const Color(0xFF6B7280),
                           ),
+                          const SizedBox(width: 4),
                           Text(
-                            'CREW',
-                            style: TextStyle(
-                              fontSize: 9, // Reduced from 10
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF64748B),
-                              letterSpacing: 0.3, // Reduced from 0.5
+                            timeRange,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF6B7280),
                             ),
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // **UPDATED: Closer spacing between number and "crew"**
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '$crewCount',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1E3A8A),
+                        letterSpacing: -0.3,
+                        height: 0.9, // Adjust line height for tighter spacing
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 0,
+                    ), // Changed from 2 to 0 for minimal spacing
+                    Text(
+                      'crew',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF64748B),
+                        letterSpacing: 0.3,
                       ),
                     ),
                   ],
@@ -572,7 +548,6 @@ class ManagerHomePage extends StatelessWidget {
     );
   }
 
-  // Helpers
   Widget _sectionHeader(String title, {Widget? trailing}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

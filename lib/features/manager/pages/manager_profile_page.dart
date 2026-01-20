@@ -1,6 +1,6 @@
 import 'package:escheduler/features/auth/login_page.dart';
-import 'package:escheduler/features/manager/pages/manager_change_password.dart';
-import 'package:escheduler/features/manager/pages/manager_shift_history.dart';
+import 'package:escheduler/Features/manager/pages/manager_change_password.dart';
+import 'package:escheduler/Features/manager/pages/manager_shift_history.dart';
 import 'package:flutter/material.dart';
 
 class ManagerProfilePage extends StatelessWidget {

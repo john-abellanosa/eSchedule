@@ -22,68 +22,110 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
     'Evening Shift',
   ];
 
-  // Sample crew data with actual names
-  final Map<String, Map<String, List<String>>> _crewData = {
+  // Updated crew data with station assignments
+  final Map<String, Map<String, List<Map<String, String>>>> _crewData = {
     'Graveyard Shift': {
-      'Front Counter': ['Olivia Taylor', 'Robert Lee'],
-      'Drive-Thru': ['Jennifer White', 'Thomas Harris'],
-      'Kitchen': ['Lisa Martin', 'Daniel Clark', 'Kevin Wilson'],
-      'Fry Station': ['Amanda Scott'],
+      'Front Counter': [
+        {'name': 'Olivia Taylor', 'station': 'Counter 1'},
+        {'name': 'Robert Lee', 'station': 'Counter 2'},
+      ],
+      'Drive-Thru': [
+        {'name': 'Jennifer White', 'station': 'Presenter'},
+        {'name': 'Thomas Harris', 'station': 'Cashier'},
+      ],
+      'Kitchen': [
+        {'name': 'Lisa Martin', 'station': 'Grill'},
+        {'name': 'Daniel Clark', 'station': 'Assembly'},
+        {'name': 'Kevin Wilson', 'station': 'Fryer'},
+      ],
+      'Fry Station': [
+        {'name': 'Amanda Scott', 'station': 'Fry Station'},
+      ],
     },
     'Morning Shift': {
       'Front Counter': [
-        'Emma Davis',
-        'James Wilson',
-        'Sophia Brown',
-        'Michael Chen',
+        {'name': 'Emma Davis', 'station': 'Counter 1'},
+        {'name': 'James Wilson', 'station': 'Counter 2'},
+        {'name': 'Sophia Brown', 'station': 'Counter 3'},
+        {'name': 'Michael Chen', 'station': 'Counter 1'},
       ],
-      'Drive-Thru': ['Olivia Taylor', 'David Miller', 'Sarah Johnson'],
+      'Drive-Thru': [
+        {'name': 'Olivia Taylor', 'station': 'Presenter'},
+        {'name': 'David Miller', 'station': 'Runner'},
+        {'name': 'Sarah Johnson', 'station': 'Cashier'},
+      ],
       'Kitchen': [
-        'Robert Lee',
-        'Jennifer White',
-        'Thomas Harris',
-        'Lisa Martin',
-        'Daniel Clark',
+        {'name': 'Robert Lee', 'station': 'Grill'},
+        {'name': 'Jennifer White', 'station': 'Assembly'},
+        {'name': 'Thomas Harris', 'station': 'Fryer'},
+        {'name': 'Lisa Martin', 'station': 'Grill'},
+        {'name': 'Daniel Clark', 'station': 'Assembly'},
       ],
-      'Fry Station': ['Kevin Wilson', 'Amanda Scott'],
-      'Drinks & Desserts': ['Brian Adams', 'Jessica Turner'],
+      'Fry Station': [
+        {'name': 'Kevin Wilson', 'station': 'Fry Station'},
+        {'name': 'Amanda Scott', 'station': 'Fry Station'},
+      ],
+      'Drinks & Desserts': [
+        {'name': 'Brian Adams', 'station': 'Drinks'},
+        {'name': 'Jessica Turner', 'station': 'Desserts'},
+      ],
     },
     'Afternoon Shift': {
       'Front Counter': [
-        'Sarah Johnson',
-        'Michael Chen',
-        'Emma Davis',
-        'James Wilson',
-        'Olivia Taylor',
+        {'name': 'Sarah Johnson', 'station': 'Counter 1'},
+        {'name': 'Michael Chen', 'station': 'Counter 2'},
+        {'name': 'Emma Davis', 'station': 'Counter 3'},
+        {'name': 'James Wilson', 'station': 'Counter 1'},
+        {'name': 'Olivia Taylor', 'station': 'Counter 2'},
       ],
       'Drive-Thru': [
-        'David Miller',
-        'Jennifer White',
-        'Thomas Harris',
-        'Lisa Martin',
+        {'name': 'David Miller', 'station': 'Presenter'},
+        {'name': 'Jennifer White', 'station': 'Runner'},
+        {'name': 'Thomas Harris', 'station': 'Cashier'},
+        {'name': 'Lisa Martin', 'station': 'Presenter'},
       ],
       'Kitchen': [
-        'Robert Lee',
-        'Daniel Clark',
-        'Kevin Wilson',
-        'Amanda Scott',
-        'Brian Adams',
-        'Jessica Turner',
+        {'name': 'Robert Lee', 'station': 'Grill'},
+        {'name': 'Daniel Clark', 'station': 'Assembly'},
+        {'name': 'Kevin Wilson', 'station': 'Fryer'},
+        {'name': 'Amanda Scott', 'station': 'Assembly'},
+        {'name': 'Brian Adams', 'station': 'Grill'},
+        {'name': 'Jessica Turner', 'station': 'Fryer'},
       ],
-      'Fry Station': ['Sophia Brown', 'Michael Chen', 'David Miller'],
-      'Drinks & Desserts': ['Emma Davis', 'James Wilson'],
+      'Fry Station': [
+        {'name': 'Sophia Brown', 'station': 'Fry Station'},
+        {'name': 'Michael Chen', 'station': 'Fry Station'},
+        {'name': 'David Miller', 'station': 'Fry Station'},
+      ],
+      'Drinks & Desserts': [
+        {'name': 'Emma Davis', 'station': 'Drinks'},
+        {'name': 'James Wilson', 'station': 'Desserts'},
+      ],
     },
     'Evening Shift': {
-      'Front Counter': ['Thomas Harris', 'Lisa Martin', 'Daniel Clark'],
-      'Drive-Thru': ['Kevin Wilson', 'Amanda Scott', 'Brian Adams'],
-      'Kitchen': [
-        'Jessica Turner',
-        'Sophia Brown',
-        'Michael Chen',
-        'David Miller',
+      'Front Counter': [
+        {'name': 'Thomas Harris', 'station': 'Counter 1'},
+        {'name': 'Lisa Martin', 'station': 'Counter 2'},
+        {'name': 'Daniel Clark', 'station': 'Counter 3'},
       ],
-      'Fry Station': ['Emma Davis', 'James Wilson'],
-      'Drinks & Desserts': ['Sarah Johnson'],
+      'Drive-Thru': [
+        {'name': 'Kevin Wilson', 'station': 'Presenter'},
+        {'name': 'Amanda Scott', 'station': 'Runner'},
+        {'name': 'Brian Adams', 'station': 'Cashier'},
+      ],
+      'Kitchen': [
+        {'name': 'Jessica Turner', 'station': 'Grill'},
+        {'name': 'Sophia Brown', 'station': 'Assembly'},
+        {'name': 'Michael Chen', 'station': 'Fryer'},
+        {'name': 'David Miller', 'station': 'Grill'},
+      ],
+      'Fry Station': [
+        {'name': 'Emma Davis', 'station': 'Fry Station'},
+        {'name': 'James Wilson', 'station': 'Fry Station'},
+      ],
+      'Drinks & Desserts': [
+        {'name': 'Sarah Johnson', 'station': 'Drinks'},
+      ],
     },
   };
 
@@ -107,7 +149,7 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
   }
 
   void _onSearchChanged() {
-    setState(() {});
+    setState(() {}); // Trigger rebuild when search text changes
   }
 
   void _handleFocusChange() {
@@ -199,9 +241,9 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
   }
 
   // Get filtered crew data based on shift and search
-  Map<String, Map<String, List<String>>> get _filteredCrewData {
+  Map<String, Map<String, List<Map<String, String>>>> get _filteredCrewData {
     final searchQuery = _searchController.text.trim().toLowerCase();
-    Map<String, Map<String, List<String>>> filteredData = {};
+    Map<String, Map<String, List<Map<String, String>>>> filteredData = {};
 
     // First filter by shift
     if (_selectedShift == 'All Shifts') {
@@ -213,18 +255,23 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
 
     // Then filter by search query if there is one
     if (searchQuery.isNotEmpty) {
-      final Map<String, Map<String, List<String>>> searchFilteredData = {};
+      final Map<String, Map<String, List<Map<String, String>>>>
+      searchFilteredData = {};
 
       for (final shiftEntry in filteredData.entries) {
         final shift = shiftEntry.key;
         final stationData = shiftEntry.value;
-        final Map<String, List<String>> filteredStationData = {};
+        final Map<String, List<Map<String, String>>> filteredStationData = {};
 
         for (final stationEntry in stationData.entries) {
           final station = stationEntry.key;
           final crewList = stationEntry.value;
           final filteredCrew = crewList
-              .where((crewName) => crewName.toLowerCase().contains(searchQuery))
+              .where(
+                (crewMember) =>
+                    crewMember['name']!.toLowerCase().contains(searchQuery) ||
+                    crewMember['station']!.toLowerCase().contains(searchQuery),
+              )
               .toList();
 
           if (filteredCrew.isNotEmpty) {
@@ -568,6 +615,21 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
     }
   }
 
+  IconData _getShiftIcon(String shift) {
+    switch (shift) {
+      case 'Graveyard Shift':
+        return Icons.nightlight_round;
+      case 'Morning Shift':
+        return Icons.wb_twilight;
+      case 'Afternoon Shift':
+        return Icons.light_mode;
+      case 'Evening Shift':
+        return Icons.nightlight;
+      default:
+        return Icons.schedule;
+    }
+  }
+
   Widget _buildShiftSection(String title, String time) {
     final stationData = _filteredCrewData[title] ?? _crewData[title]!;
     final totalCrewCount = stationData.values.fold<int>(
@@ -581,28 +643,54 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF0F172A),
-                    letterSpacing: -0.1,
+            // Wrap the left side content in Padding to move it right
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16.0,
+              ), // Adjust this value as needed
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E3A8A), // Blue background
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        _getShiftIcon(title),
+                        color: Colors.white, // White icon
+                        size: 24,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  time,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF64748B),
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A),
+                          letterSpacing: -0.1,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        time,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF64748B),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -634,29 +722,11 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
     );
   }
 
-  Widget _buildStationRow(String shift, String station, List<String> crewList) {
-    IconData stationIcon;
-
-    switch (station) {
-      case 'Front Counter':
-        stationIcon = Icons.point_of_sale;
-        break;
-      case 'Drive-Thru':
-        stationIcon = Icons.drive_eta;
-        break;
-      case 'Kitchen':
-        stationIcon = Icons.restaurant;
-        break;
-      case 'Fry Station':
-        stationIcon = Icons.local_fire_department;
-        break;
-      case 'Drinks & Desserts':
-        stationIcon = Icons.local_cafe;
-        break;
-      default:
-        stationIcon = Icons.store;
-    }
-
+  Widget _buildStationRow(
+    String shift,
+    String station,
+    List<Map<String, String>> crewList,
+  ) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -675,21 +745,6 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
         children: [
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E3A8A).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Icon(
-                    stationIcon,
-                    color: const Color(0xFF1E3A8A),
-                    size: 24,
-                  ),
-                ),
-              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -729,7 +784,10 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
           ),
           const SizedBox(height: 12),
           Column(
-            children: crewList.map((crewName) {
+            children: crewList.map((crewMember) {
+              final crewName = crewMember['name']!;
+              final stationAssignment = crewMember['station']!;
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Container(
@@ -739,41 +797,37 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            crewName[0],
-                            style: const TextStyle(
-                              color: Color(0xFF475569),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  crewName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Color(0xFF0F172A),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  stationAssignment,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF64748B),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              crewName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Color(0xFF0F172A),
-                              ),
-                            ),
-                          ],
-                        ),
+                        ],
                       ),
                     ],
                   ),
@@ -824,24 +878,6 @@ class _CrewTeamPageState extends State<CrewTeamPage> {
       ),
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFEE2E2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                name[0],
-                style: const TextStyle(
-                  color: Color(0xFFDC2626),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

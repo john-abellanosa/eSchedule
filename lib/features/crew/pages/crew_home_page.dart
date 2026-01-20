@@ -1,6 +1,6 @@
-import 'package:escheduler/features/crew/dashboard/pages/crew_notification.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Added import
+import 'package:intl/intl.dart';
+import 'package:escheduler/features/crew/pages/crew_notification.dart';
 
 class CrewHomePage extends StatefulWidget {
   const CrewHomePage({Key? key}) : super(key: key);
@@ -256,30 +256,6 @@ class _CrewHomePageState extends State<CrewHomePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Stats Section
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: _buildStatCard(
-                  //         'Hours',
-                  //         '32.5',
-                  //         'This Week',
-                  //         Icons.access_time_rounded,
-                  //       ),
-                  //     ),
-                  //     const SizedBox(width: 12),
-                  //     Expanded(
-                  //       child: _buildStatCard(
-                  //         'Attendance',
-                  //         '98%',
-                  //         'This Month',
-                  //         Icons.calendar_today_rounded,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // const SizedBox(height: 20),
-
                   // Announcements
                   _sectionHeader('Announcements'),
                   const SizedBox(height: 12),
@@ -332,7 +308,7 @@ class _CrewHomePageState extends State<CrewHomePage> {
 
           final now = snapshot.data!;
           final dateFormat = DateFormat(
-            'EEEE, MMMM d, y',
+            'EEE, MMMM d, y',
           ); // Example: Monday, December 11, 2023
           final timeFormat = DateFormat('hh:mm:ss a'); // Example: 02:30:45 PM
 
@@ -384,76 +360,6 @@ class _CrewHomePageState extends State<CrewHomePage> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildStatCard(
-    String label,
-    String value,
-    String subtitle,
-    IconData icon,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE7EBF0)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x140F172A),
-            blurRadius: 10,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0F172A),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF64748B),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Color(0xFF94A3B8),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E3A8A).withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, size: 18, color: const Color(0xFF1E3A8A)),
-            ),
-          ),
-        ],
       ),
     );
   }
