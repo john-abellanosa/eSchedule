@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:escheduler/features/manager/pages/manager_request_page/widgets/empty_state/empty_state.dart';
 import 'package:escheduler/features/manager/pages/manager_request_page/dialog/new_request_dialog.dart';
 import 'package:escheduler/features/manager/pages/manager_request_page/widgets/input_widgets/input_widgets.dart';
 import 'package:escheduler/features/manager/pages/manager_request_page/request_form/leave_request_form.dart';
@@ -80,7 +81,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Manage Requests',
+              'Manage Your Requests',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -145,7 +146,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
 
   Widget _buildRequestsTab() {
     if (_requests.isEmpty) {
-      return _buildEmptyState(
+      return buildEmptyState(
         icon: Icons.gesture,
         title: 'No Requests',
         message: 'No one is requesting shifts from you',
@@ -570,7 +571,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Swap',
         'id': '1',
-        'fromEmployee': 'Michael Rodriguez',
+        'fromEmployee': 'You',
         'fromPosition': 'Service Manager',
         'fromTimeIn': '02:00 PM',
         'fromTimeOut': '10:00 PM',
@@ -601,17 +602,14 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
         'swapPartner': 'Alex Brown',
         'requestedDate': 'Dec 16, 2024',
         'approvedStatuses': [],
-        'pendingStatuses': [
-          "Awaiting Co-worker's response",
-          "Pending Admin Approval",
-        ],
-        'canCancel': true,
+        'pendingStatuses': ["Pending Admin Approval"],
+        'canCancel': false,
       },
       // Leave Request - Pending Admin Approval
       {
         'type': 'Leave',
         'id': 'C3',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Annual Leave',
         'startDate': 'Wed, Dec 17',
         'endDate': 'Fri, Dec 19',
@@ -625,7 +623,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Off Duty',
         'id': 'O1',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Tue, Dec 24',
         'duration': '2 Days',
         'reason': 'Christmas holiday',
@@ -637,7 +635,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
     ];
 
     if (_statusRequests.isEmpty) {
-      return _buildEmptyState(
+      return buildEmptyState(
         icon: Icons.pending_actions,
         title: 'No Status Updates',
         message: 'No requests are currently being processed',
@@ -754,14 +752,18 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () => _handleCancelRequest(requestId),
-        child: const Padding(
-          padding: EdgeInsets.only(top: 4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFDC2626),
+            borderRadius: BorderRadius.circular(4),
+          ),
           child: Text(
             'Cancel Request',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: Color(0xFFDC2626),
+              color: Colors.white,
             ),
           ),
         ),
@@ -1364,67 +1366,69 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       builder: (context) => Dialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Message
-              const Text(
-                'Are you sure you want to cancel this request? This action cannot be undone.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF475569),
-                  height: 1.4,
+        child: Container(
+          constraints: BoxConstraints(minWidth: 300),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Message
+                const Text(
+                  'Are you sure you want to cancel this request? This action cannot be undone.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF475569),
+                    height: 1.4,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
-              // Buttons at bottom right
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'No, keep it',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF64748B),
-                        ),
-                      ),
-                    ),
+                const SizedBox(height: 12),
 
-                    const SizedBox(width: 12),
-
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Request $requestId cancelled'),
-                            backgroundColor: const Color(0xFFDC2626),
-                            duration: const Duration(seconds: 2),
+                // Buttons at bottom right
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          'No, keep it',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF64748B),
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'Yes, Cancel',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFDC2626),
                         ),
                       ),
-                    ),
-                  ],
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Request $requestId cancelled'),
+                              backgroundColor: const Color(0xFFDC2626),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Yes, Cancel',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFDC2626),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1438,7 +1442,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Swap',
         'id': 'C1',
-        'fromEmployee': 'Jennifer Lee',
+        'fromEmployee': 'You',
         'fromPosition': 'Service Manager',
         'fromTimeIn': '11:00 AM',
         'fromTimeOut': '07:00 PM',
@@ -1468,7 +1472,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
         'reason': 'Family wedding ceremony',
         'swapPartner': '',
         'requestedDate': 'Dec 13, 2024',
-        'approvedStatuses': ["Co-worker Accepted", "Admin Approved"],
+        'approvedStatuses': ["Admin Approved"],
         'pendingStatuses': [],
         'canCancel': false,
       },
@@ -1476,7 +1480,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Leave',
         'id': 'C3',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Annual Leave',
         'startDate': 'Wed, Dec 17',
         'endDate': 'Fri, Dec 19',
@@ -1490,7 +1494,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Off Duty',
         'id': 'C4',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Sat, Dec 20',
         'duration': '1 Day',
         'reason': 'Personal day off for relocation',
@@ -1502,7 +1506,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
     ];
 
     if (_completedRequests.isEmpty) {
-      return _buildEmptyState(
+      return buildEmptyState(
         icon: Icons.check_circle,
         title: 'No Completed Requests',
         message: 'Your completed requests will appear here',
@@ -2143,7 +2147,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Give Away',
         'id': 'X2',
-        'fromEmployee': 'Maria Garcia',
+        'fromEmployee': 'You',
         'fromPosition': 'Manager In-Charge',
         'fromTimeIn': '09:00 AM',
         'fromTimeOut': '05:00 PM',
@@ -2162,7 +2166,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Leave',
         'id': 'X4',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Sick Leave',
         'startDate': 'Fri, Dec 26',
         'endDate': 'Mon, Dec 29',
@@ -2176,7 +2180,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
       {
         'type': 'Off Duty',
         'id': 'X5',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Tue, Dec 30',
         'duration': '1 Day',
         'reason': 'Need personal day for home repairs',
@@ -2188,7 +2192,7 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
     ];
 
     if (_cancelledRequests.isEmpty) {
-      return _buildEmptyState(
+      return buildEmptyState(
         icon: Icons.cancel,
         title: 'No Cancelled Requests',
         message: 'Cancelled requests will appear here',
@@ -2834,36 +2838,6 @@ class _ManagerRequestPageState extends State<ManagerRequestPage>
                 _buildCancelButton(canCancel, requestId),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState({
-    required IconData icon,
-    required String title,
-    required String message,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 48),
-      child: Column(
-        children: [
-          Icon(icon, size: 48, color: const Color(0xFFCBD5E1)),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF64748B),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF94A3B8)),
           ),
         ],
       ),

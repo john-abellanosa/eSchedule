@@ -85,7 +85,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Manage Requests',
+              'Manage Your Requests',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -606,7 +606,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         'reason': 'Need to attend evening class',
         'swapPartner': 'Emily Wilson',
         'requestedDate': 'Dec 14, 2024',
-        'approvedStatuses': ["Co-worker Accepted"],
+        'approvedStatuses': [],
         'pendingStatuses': [
           "Pending Admin Approval",
           "Pending Scheduler Approval",
@@ -617,7 +617,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Give Away',
         'id': '2',
-        'fromEmployee': 'David Kim',
+        'fromEmployee': 'You',
         'fromDepartment': 'Kitchen',
         'fromStation': 'Grill Station',
         'fromTimeIn': '08:00 AM',
@@ -638,7 +638,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Swap',
         'id': '3',
-        'fromEmployee': 'Sarah Johnson',
+        'fromEmployee': 'You',
         'fromDepartment': 'Front Counter',
         'fromStation': 'Counter 1',
         'fromTimeIn': '09:00 AM',
@@ -676,32 +676,29 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         'reason': 'Family event',
         'swapPartner': '',
         'requestedDate': 'Dec 17, 2024',
-        'approvedStatuses': ["Co-worker Accepted"],
-        'pendingStatuses': [
-          "Pending Admin Approval",
-          "Pending Scheduler Approval",
-        ],
+        'approvedStatuses': ["Admin Approved"],
+        'pendingStatuses': ["Pending Scheduler Approval"],
         'canCancel': false,
       },
       // Leave Request - Pending Admin Approval
       {
         'type': 'Leave',
         'id': 'C3',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Annual Leave',
         'startDate': 'Wed, Dec 17',
         'endDate': 'Fri, Dec 19',
         'reason': 'Short vacation with family',
         'requestedDate': 'Dec 14, 2024',
-        'approvedStatuses': ["Admin Approved"], // Only Admin Approved
-        'pendingStatuses': [],
-        'canCancel': false,
+        'approvedStatuses': [], // Only Admin Approved
+        'pendingStatuses': ["Pending Admin Approval"],
+        'canCancel': true,
       },
       // Off Duty Request - Pending Scheduler Approval
       {
         'type': 'Off Duty',
         'id': 'O1',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Tue, Dec 24',
         'duration': '2 Days',
         'reason': 'Christmas holiday',
@@ -837,14 +834,18 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       alignment: Alignment.centerRight,
       child: GestureDetector(
         onTap: () => _handleCancelRequest(requestId),
-        child: const Padding(
-          padding: EdgeInsets.only(top: 4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFDC2626),
+            borderRadius: BorderRadius.circular(4),
+          ),
           child: Text(
             'Cancel Request',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: Color(0xFFDC2626),
+              color: Colors.white,
             ),
           ),
         ),
@@ -1443,77 +1444,76 @@ class _CrewRequestPageState extends State<CrewRequestPage>
     );
   }
 
-  // Handle cancel request with styled confirmation dialog
   // Handle cancel request with simple confirmation dialog
   void _handleCancelRequest(String requestId) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Reduced from 12 to 8
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16), // Reduced from 20 to 16
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Message
-              const Text(
-                'Are you sure you want to cancel this request? This action cannot be undone.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF475569),
-                  height: 1.4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: Container(
+          constraints: BoxConstraints(minWidth: 300),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Message
+                const Text(
+                  'Are you sure you want to cancel this request? This action cannot be undone.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF475569),
+                    height: 1.4,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 16), // Reduced from 24 to 16
-              // Buttons at bottom right
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'No, keep it',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF64748B),
-                        ),
-                      ),
-                    ),
+                const SizedBox(height: 12),
 
-                    const SizedBox(width: 12), // Reduced from 16 to 12
-
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Request $requestId cancelled'),
-                            backgroundColor: const Color(0xFFDC2626),
-                            duration: const Duration(seconds: 2),
+                // Buttons at bottom right
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          'No, keep it',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF64748B),
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'Yes, Cancel',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFDC2626),
                         ),
                       ),
-                    ),
-                  ],
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Request $requestId cancelled'),
+                              backgroundColor: const Color(0xFFDC2626),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Yes, Cancel',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFDC2626),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1540,11 +1540,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         'reason': 'Medical appointment in the afternoon',
         'swapPartner': 'Robert Garcia',
         'requestedDate': 'Dec 12, 2024',
-        'approvedStatuses': [
-          "Co-worker Accepted",
-          "Admin Approved",
-          "Scheduler Approved",
-        ],
+        'approvedStatuses': ["Admin Approved", "Scheduler Approved"],
         'pendingStatuses': [],
         'canCancel': false,
       },
@@ -1552,7 +1548,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Give Away',
         'id': 'C2',
-        'fromEmployee': 'Kevin Patel',
+        'fromEmployee': 'You',
         'fromDepartment': 'Kitchen',
         'fromStation': 'Grill Station',
         'fromTimeIn': '02:00 PM',
@@ -1577,7 +1573,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Leave',
         'id': 'C3',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Annual Leave',
         'startDate': 'Wed, Dec 17',
         'endDate': 'Fri, Dec 19',
@@ -1591,7 +1587,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Off Duty',
         'id': 'C4',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Sat, Dec 20',
         'duration': '1 Day',
         'reason': 'Personal day off for relocation',
@@ -2228,7 +2224,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Swap',
         'id': 'X1',
-        'fromEmployee': 'John Smith',
+        'fromEmployee': 'You',
         'fromDepartment': 'Drive Thru',
         'fromStation': 'Cashier',
         'fromTimeIn': '03:00 PM',
@@ -2262,7 +2258,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         'reason': 'Personal errands to run',
         'swapPartner': '',
         'requestedDate': 'Dec 19, 2024',
-        'approvedStatuses': ["Co-worker Accepted"],
+        'approvedStatuses': [],
         'pendingStatuses': ["Admin Declined"],
         'canCancel': false,
       },
@@ -2283,7 +2279,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         'reason': 'Medical checkup scheduled',
         'swapPartner': 'Emma Davis',
         'requestedDate': 'Dec 20, 2024',
-        'approvedStatuses': ["Co-worker Accepted", "Admin Approved"],
+        'approvedStatuses': ["Admin Approved"],
         'pendingStatuses': ["Scheduler Declined"],
         'canCancel': false,
       },
@@ -2291,7 +2287,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Leave',
         'id': 'X4',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Sick Leave',
         'startDate': 'Fri, Dec 26',
         'endDate': 'Mon, Dec 29',
@@ -2305,7 +2301,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Off Duty',
         'id': 'X5',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Tue, Dec 30',
         'duration': '1 Day',
         'reason': 'Need personal day for home repairs',
@@ -2331,15 +2327,15 @@ class _CrewRequestPageState extends State<CrewRequestPage>
         'reason': 'Unexpected personal commitment',
         'swapPartner': '',
         'requestedDate': 'Dec 21, 2024',
-        'approvedStatuses': [],
-        'pendingStatuses': ["Cancelled"],
+        'approvedStatuses': ["Admin Approved"],
+        'pendingStatuses': ["Scheduler Declined"],
         'canCancel': false,
       },
       // EXAMPLE 7: Off Duty Request - Declined by Scheduler
       {
         'type': 'Off Duty',
         'id': 'X7',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'date': 'Sat, Jan 4',
         'duration': '2 Days',
         'reason': 'Weekend family event',
@@ -2352,7 +2348,7 @@ class _CrewRequestPageState extends State<CrewRequestPage>
       {
         'type': 'Leave',
         'id': 'X8',
-        'fromEmployee': 'Yourself',
+        'fromEmployee': 'You',
         'leaveType': 'Annual Leave',
         'startDate': 'Wed, Jan 1',
         'endDate': 'Fri, Jan 3',

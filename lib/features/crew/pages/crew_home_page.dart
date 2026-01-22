@@ -324,7 +324,7 @@ class _CrewHomePageState extends State<CrewHomePage> {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1E3A8A),
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 2),

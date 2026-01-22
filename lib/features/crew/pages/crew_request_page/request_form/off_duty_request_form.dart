@@ -4,7 +4,6 @@ import 'package:escheduler/features/crew/pages/crew_request_page/widgets/input_w
 void showOffDutyRequestForm(BuildContext context, {bool isEdit = false}) {
   TextEditingController dateController = TextEditingController();
   TextEditingController reasonController = TextEditingController();
-  String? duration;
 
   showModalBottomSheet(
     context: context,
@@ -52,20 +51,6 @@ void showOffDutyRequestForm(BuildContext context, {bool isEdit = false}) {
             ),
             const SizedBox(height: 6),
             dateField(dateController, context, 'Select Date'),
-            const SizedBox(height: 16),
-            const Text(
-              'Duration',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF475569),
-              ),
-            ),
-            const SizedBox(height: 6),
-            dropdownField(
-              items: const ['1 Day', '2 Days'],
-              onChanged: (v) => duration = v,
-            ),
             const SizedBox(height: 16),
             const Text(
               'Reason',
